@@ -1,6 +1,6 @@
 #ifndef UZDL_h
 #define UZDL_h
 
-void UZDL();
+int uzdL();
 
 #endif
