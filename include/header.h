@@ -6,7 +6,7 @@ extern const int UZF_ECHO_PIN;
 extern const int IR_SENSOR_L_PIN;
 extern const int IR_SENSOR_R_PIN;
 
-extern int V;
+extern int baseSpeed;
 extern int minIRL, minIRR , maxIRL, maxIRR ;
 extern int min1;
 extern int max1;
@@ -15,5 +15,6 @@ extern int max2;
 extern float K;
 extern int N;
 extern int VP;
+extern int baseDelay;
 
 #endif

@@ -1,3 +1,11 @@
+#define DEBUG 0
+
+#if DEBUG
+#include "avr8-stub.h"
+#else
+
+#endif
+
 #include <Arduino.h>
 #include <Servo.h>
 #include <NewPing.h>
@@ -14,7 +22,7 @@ const int UZF_ECHO_PIN = 8;
 const int IR_SENSOR_L_PIN = A0;
 const int IR_SENSOR_R_PIN = A1;
 
-int V = 150;
+int baseSpeed = 150;
 int minIRL = 400, minIRR = 400, maxIRL = 600, maxIRR = 600;
 int min1 = 400;
 int max1 = 600;
@@ -26,6 +34,7 @@ int N1 = 0;
 int VP = 90;
 int servoOpenPosition = 50;
 int servoClosePosition = 110;
+int baseDelay=1000;
 
 void setup()
 {
@@ -42,7 +51,11 @@ void setup()
   pinMode(A2, INPUT);           // датчик ИК - А2
   servo.attach(13);
   servo.write(servoOpenPosition);
-  Serial.begin(9600); // включаем монитор порта
+  #if DEBUG
+    debug_init();
+#else
+    Serial.begin(9600); // Only using Serial when not debugging!
+#endif
 }
 
 bool isOnCross()
@@ -93,37 +106,33 @@ void loop()
   //   Serial.print(" ");
   //   Serial.println(maxIRR);
 
-  // delay(1000);
+  // delay(baseDelay);
   if (isOnCross())
   {
 
-    go(V, V);
-    delay(1000);
-    go(0, 0);
-    delay(1000);
+    go(baseSpeed, baseSpeed, baseDelay);
+    go(0, 0, baseDelay);
     preg();
     N = N + 1;
     if (N == 2)
     {
       go(0, 0);
-      delay(2000);
       right();
-      delay(1000);
+      delay(baseDelay);
 
       while (uzdF() > 7)
       {
         preg();
         if (isOnCross())
         {
-          go(V, V);
+          go(baseSpeed, baseSpeed);
         }
       }
-      delay(600);
-      go(0, 0);
-      delay(1000);
+      delay(baseDelay/2);
+      go(0, 0, baseDelay);
       closeServo();
-      delay(1000);
-      go(-V, -V);
+      delay(baseDelay);
+      go(-baseSpeed, -baseSpeed);
       
       
       preg();

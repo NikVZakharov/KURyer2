@@ -3,6 +3,5 @@
 
 void preg();
 int getIRSensorValue(int sensor);
-void pregNazad();
 
 #endif
