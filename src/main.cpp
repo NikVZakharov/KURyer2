@@ -2,19 +2,20 @@
 #include <Servo.h>
 #include <NewPing.h>
 
-#include <go.h>
-#include <preg.h>
-#include <right.h>
-#include <left.h>
-#include <UZDL.h>
-#include <UZDF.h>
+#include <drive.h>
+#include <middleware.h>
+#include <UZD.h>
 #include <header.h>
 
 Servo servo;
 const int UZF_TRIGGER_PIN = 7;
 const int UZF_ECHO_PIN = 8;
+// Устанавливаем номера пинов для датчиков линии
+const int IR_SENSOR_L_PIN = A0;
+const int IR_SENSOR_R_PIN = A1;
 
 int V = 150;
+int minIRL = 400, minIRR = 400, maxIRL = 600, maxIRR = 600;
 int min1 = 400;
 int max1 = 600;
 int min2 = 400;
@@ -23,8 +24,8 @@ float K = 0.4;
 int N = 0;
 int N1 = 0;
 int VP = 90;
-int servoOpenPosition = 35;
-int servoClosePosition = 90;
+int servoOpenPosition = 50;
+int servoClosePosition = 110;
 
 void setup()
 {
@@ -47,7 +48,7 @@ void setup()
 bool isOnCross()
 {
   bool result = false;
-  if (analogRead(A0) < 500 && analogRead(A1) < 500)
+  if (analogRead(IR_SENSOR_L_PIN) < 500 && analogRead(IR_SENSOR_R_PIN) < 500)
   {
     result = true;
   }
@@ -75,9 +76,27 @@ void openServo()
 void loop()
 {
   preg();
-  Serial.println(uzdF());
+  //   //Serial.println(uzdF());
+  //   Serial.print(getIRSensorValue(IR_SENSOR_L_PIN));
+  //  // Serial.print(analogRead(IR_SENSOR_L_PIN));
+  //   Serial.print(" ");
+  //   Serial.println(getIRSensorValue(IR_SENSOR_R_PIN));
+  //  // Serial.println(analogRead(IR_SENSOR_R_PIN));
+
+  //   Serial.print(minIRL);
+  //  // Serial.print(analogRead(IR_SENSOR_L_PIN));
+  //   Serial.print(" ");
+  //   Serial.println(maxIRL);
+
+  //   Serial.print(minIRR);
+  //  // Serial.print(analogRead(IR_SENSOR_L_PIN));
+  //   Serial.print(" ");
+  //   Serial.println(maxIRR);
+
+  // delay(1000);
   if (isOnCross())
   {
+
     go(V, V);
     delay(1000);
     go(0, 0);
@@ -90,44 +109,39 @@ void loop()
       delay(2000);
       right();
       delay(1000);
-      
+
       while (uzdF() > 7)
       {
         preg();
         if (isOnCross())
         {
-          go(V,V);
+          go(V, V);
         }
-        
       }
-      go(0,0);
-      delay(1000);
-      closeServo();
+      delay(600);
       go(0, 0);
       delay(1000);
+      closeServo();
+      delay(1000);
       go(-V, -V);
-      delay(1500);
-      right();
+      
+      
+      preg();
+      while (N1 < 2)
+      {
+        preg();
+        if (isOnCross())
+        {
+          N1 = N1 + 1;
+        }
+      }
+      openServo();
       while (1)
       {
         /* code */
       }
-
-  //     //     while (N1 < 2)
-  //     //     {
-  //     //       preg();
-  //     //       if (isOnCross())
-  //     //       {
-  //     //         N1 = N1 + 1;
-  //     //       }
-  //     //     }
-  //     //     openServo();
-  //     //     while (1)
-  //     //     {
-  //     //       /* code */
-  //     //     }
     }
-   }
+  }
 }
 
 // for(int i=120;i>50;i--) {shwat.write(i);delay(20);}
