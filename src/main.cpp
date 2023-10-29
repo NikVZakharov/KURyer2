@@ -38,6 +38,7 @@ int baseDelay=1000;
 
 void setup()
 {
+  
   pinMode(2, OUTPUT); // напр. мотора лев.
   pinMode(3, OUTPUT); // скор. мотора лев.
   pinMode(4, OUTPUT); // напр. мотора прав.
@@ -56,6 +57,8 @@ void setup()
 #else
     Serial.begin(9600); // Only using Serial when not debugging!
 #endif
+
+
 }
 
 bool isOnCross()
@@ -87,8 +90,11 @@ void openServo()
 }
 
 void loop()
-{
-  preg();
+{ 
+  // closeServo();
+  // delay(baseDelay);
+  // openServo();
+ // delay(baseDelay);
   //   //Serial.println(uzdF());
   //   Serial.print(getIRSensorValue(IR_SENSOR_L_PIN));
   //  // Serial.print(analogRead(IR_SENSOR_L_PIN));
@@ -107,6 +113,7 @@ void loop()
   //   Serial.println(maxIRR);
 
   // delay(baseDelay);
+  preg();
   if (isOnCross())
   {
 
@@ -123,20 +130,13 @@ void loop()
       while (uzdF() > 7)
       {
         preg();
-        if (isOnCross())
-        {
-          go(baseSpeed, baseSpeed);
-        }
       }
-      delay(baseDelay/2);
       go(0, 0, baseDelay);
       closeServo();
       delay(baseDelay);
-      go(-baseSpeed, -baseSpeed);
-      
-      
-      preg();
-      while (N1 < 2)
+      go(-baseSpeed, -baseSpeed, baseDelay/5);      
+      right();
+      while (N1 < 1)
       {
         preg();
         if (isOnCross())
@@ -144,6 +144,7 @@ void loop()
           N1 = N1 + 1;
         }
       }
+      go(0, 0);
       openServo();
       while (1)
       {
