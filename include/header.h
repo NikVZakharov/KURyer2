@@ -13,13 +13,9 @@ extern const int SERVO_PIN;
 
 extern int baseSpeed;
 extern int minIRL, minIRR , maxIRL, maxIRR ;
-extern int min1;
-extern int max1;
-extern int min2;
-extern int max2;
-extern float K;
-extern int N;
-extern int VP;
+extern float KOEF_ERROR;
 extern int baseDelay;
+extern int servoOpenPosition;
+extern int servoClosePosition;
 
 #endif

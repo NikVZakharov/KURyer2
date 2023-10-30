@@ -40,19 +40,7 @@ void consoleLog(int interval)
     Serial.print(" ");
     Serial.print(maxIRR);
     Serial.println(" ");
-
-    // минимальные и мксимальные значения показаний левого ИК датчика
-    Serial.print(min1);
-    Serial.print(" ");
-    Serial.print(max1);
-    Serial.print(" ");
-
-    // минимальные и мксимальные значения показаний правого ИК датчика
-    Serial.print(min2);
-    Serial.print(" ");
-    Serial.print(max2);
-    Serial.println(" ");
-
+    
     delay(interval);
 }
 #endif

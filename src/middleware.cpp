@@ -32,12 +32,12 @@ void preg() {
   int d1 = analogRead(IR_SENSOR_L_PIN);
   int d2 = analogRead(IR_SENSOR_R_PIN);
 
-  if (d1 < min1) min1 = d1;
-  if (d2 < min2) min2 = d2;
-  if (d1 > max1) max1 = d1;
-  if (d2 > max2) max2 = d2;
-  d1 = map(d1, min1, max1, 0, 1000);
-  d2 = map(d2, min2, max2, 0, 1000);
+  if (d1 < minIRL) minIRL = d1;
+  if (d2 < minIRR) minIRR = d2;
+  if (d1 > maxIRL) maxIRL = d1;
+  if (d2 > maxIRR) maxIRR = d2;
+  d1 = map(d1, minIRL, maxIRL, 0, 1000);
+  d2 = map(d2, minIRR, maxIRR, 0, 1000);
 
   int E = d1 - d2;
   float K = 0.4;
