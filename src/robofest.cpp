@@ -34,6 +34,8 @@ float KOEF_ERROR = 0.4;
 int servoOpenPosition = 50;
 int servoClosePosition = 110;
 int baseDelay = 500;
+int P=0;
+int crossDelay=1000;
 
 void setup()
 {
@@ -67,14 +69,14 @@ initServo();
 void moveBanka()
 {
 
-  while (uzdF() > 7)
+  while (uzdF() > 5)
   {
     preg();
   }
   go(0, 0, baseDelay);
   closeServo();
   delay(baseDelay);
-  go(-baseSpeed, -baseSpeed, baseDelay);
+  go(-baseSpeed, -baseSpeed, baseDelay*2);
   right();
   right();
   while (!isOnCross())
@@ -82,10 +84,16 @@ void moveBanka()
     preg();
   }
   go(0, 0);
+  delay(baseDelay);
   openServo();
+  go(-baseSpeed, -baseSpeed, baseDelay);
 }
 
-
+void finish(){
+  go(baseSpeed, baseSpeed, crossDelay*4);
+  go(0,0);
+  while (true){};
+}
 
 void loop()
 {
@@ -99,31 +107,37 @@ void loop()
 
   if (isOnCross())
   {
-
-    go(baseSpeed, baseSpeed, baseDelay);
+    P++;
+    if (P==4)
+    {
+      finish();
+    }
+    go(baseSpeed, baseSpeed, crossDelay);
     go(0, 0, baseDelay);
     right();
     delay(baseDelay);
-    if (uzdF() > 20)
+    if (uzdF() < 30)
     {
       moveBanka();
+      delay(baseDelay);
+      right();
     }
     else
     {
       right();
       right();
-      if (uzdF() > 20)
+      if (uzdF() < 30)
       {
         moveBanka();
-        go(-baseSpeed, -baseSpeed, baseDelay);
+        go(-baseSpeed, -baseSpeed, baseDelay*1.5);
         left();
-       
+        preg();
       }
     }
 
-    while (1)
-    {
-      /* code */
-    }
+    // while (1)
+    // {
+    //   /* code */
+    // }
   }
 }
