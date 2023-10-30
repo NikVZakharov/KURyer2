@@ -3,5 +3,6 @@
 
 void preg();
 int getIRSensorValue(int sensor);
+bool isOnCross();
 
 #endif

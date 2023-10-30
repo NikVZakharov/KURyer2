@@ -14,6 +14,7 @@
 #include <middleware.h>
 #include <UZD.h>
 #include <header.h>
+#include <log.h>
 
 Servo servo;
 const int UZF_TRIGGER_PIN = 7;
@@ -34,11 +35,11 @@ int N1 = 0;
 int VP = 90;
 int servoOpenPosition = 50;
 int servoClosePosition = 110;
-int baseDelay=1000;
+int baseDelay = 500;
 
 void setup()
 {
-  
+
   pinMode(2, OUTPUT); // напр. мотора лев.
   pinMode(3, OUTPUT); // скор. мотора лев.
   pinMode(4, OUTPUT); // напр. мотора прав.
@@ -52,23 +53,39 @@ void setup()
   pinMode(A2, INPUT);           // датчик ИК - А2
   servo.attach(13);
   servo.write(servoOpenPosition);
-  #if DEBUG
-    debug_init();
+#if DEBUG
+  debug_init();
 #else
-    Serial.begin(9600); // Only using Serial when not debugging!
+  logInit();
 #endif
 
-
+  // Едем вперед пока не увидим поперечную черную линию
+  while (!isOnCross())
+  {
+    go(baseSpeed, baseSpeed);
+  }
+  go(baseSpeed, baseSpeed, 300); // проезжаем поперечную черную линию пока черная линия трассы не окажется между датчиками
 }
 
-bool isOnCross()
+void moveBanka()
 {
-  bool result = false;
-  if (analogRead(IR_SENSOR_L_PIN) < 500 && analogRead(IR_SENSOR_R_PIN) < 500)
+
+  while (uzdF() > 7)
   {
-    result = true;
+    preg();
   }
-  return result;
+  go(0, 0, baseDelay);
+  closeServo();
+  delay(baseDelay);
+  go(-baseSpeed, -baseSpeed, baseDelay);
+  right();
+  right();
+  while (!isOnCross)
+  {
+    preg();
+  }
+  go(0, 0);
+  openServo();
 }
 
 void closeServo()
@@ -90,68 +107,40 @@ void openServo()
 }
 
 void loop()
-{ 
-  // closeServo();
-  // delay(baseDelay);
-  // openServo();
- // delay(baseDelay);
-  //   //Serial.println(uzdF());
-  //   Serial.print(getIRSensorValue(IR_SENSOR_L_PIN));
-  //  // Serial.print(analogRead(IR_SENSOR_L_PIN));
-  //   Serial.print(" ");
-  //   Serial.println(getIRSensorValue(IR_SENSOR_R_PIN));
-  //  // Serial.println(analogRead(IR_SENSOR_R_PIN));
+{
+#if !DEBUG
+  //   consoleLog(baseDelay*2); //выводим информацию в консоль
+#endif
 
-  //   Serial.print(minIRL);
-  //  // Serial.print(analogRead(IR_SENSOR_L_PIN));
-  //   Serial.print(" ");
-  //   Serial.println(maxIRL);
-
-  //   Serial.print(minIRR);
-  //  // Serial.print(analogRead(IR_SENSOR_L_PIN));
-  //   Serial.print(" ");
-  //   Serial.println(maxIRR);
-
-  // delay(baseDelay);
   preg();
+
   if (isOnCross())
   {
 
     go(baseSpeed, baseSpeed, baseDelay);
     go(0, 0, baseDelay);
-    preg();
-    N = N + 1;
-    if (N == 2)
+    right();
+    delay(baseDelay);
+    if (uzdF() > 20)
     {
-      go(0, 0);
+      moveBanka();
+    }
+    else
+    {
       right();
-      delay(baseDelay);
+      right();
+      if (uzdF() > 20)
+      {
+        moveBanka();
+        go(-baseSpeed, -baseSpeed, baseDelay);
+        left();
+        preg();
+      }
+    }
 
-      while (uzdF() > 7)
-      {
-        preg();
-      }
-      go(0, 0, baseDelay);
-      closeServo();
-      delay(baseDelay);
-      go(-baseSpeed, -baseSpeed, baseDelay/5);      
-      right();
-      while (N1 < 1)
-      {
-        preg();
-        if (isOnCross())
-        {
-          N1 = N1 + 1;
-        }
-      }
-      go(0, 0);
-      openServo();
-      while (1)
-      {
-        /* code */
-      }
+    while (1)
+    {
+      /* code */
     }
   }
 }
-
-// for(int i=120;i>50;i--) {shwat.write(i);delay(20);}
