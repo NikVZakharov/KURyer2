@@ -47,12 +47,23 @@ void preg() {
   go(M1, M2);
 }
 
-bool isOnCross()
+bool isOnBlack(int sensor)
 {
   bool result = false;
-  if (analogRead(IR_SENSOR_L_PIN) < 300 && analogRead(IR_SENSOR_R_PIN) < 300)
+  if (analogRead(sensor) < blackLimit)
   {
     result = true;
   }
   return result;
 }
+
+bool isOnCross()
+{
+  bool result = false;
+  if (isOnBlack(IR_SENSOR_L_PIN) && isOnBlack(IR_SENSOR_R_PIN))
+  {
+    result = true;
+  }
+  return result;
+}
+

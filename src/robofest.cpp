@@ -22,42 +22,30 @@ const int UZF_ECHO_PIN = 8;
 // Устанавливаем номера пинов для датчиков линии
 const int IR_SENSOR_L_PIN = A0;
 const int IR_SENSOR_R_PIN = A1;
-const int DVIG_L_MOTOR_PIN=2;
-const int SPEED_DVIG_L_MOTOR_PIN=3;
-const int DVIG_R_MOTOR_PIN=4;
-const int SPEED_DVIG_R_MOTOR_PIN=5;
-const int SERVO_PIN=13;
+const int IR_SENSOR_M_PIN = A2;
+const int MOTOR_L_DIRECTION_PIN = 2;
+const int MOTOR_L_SPEED_PIN = 3;
+const int MOTOR_R_DIRECTION_PIN = 4;
+const int MOTOR_R_SPEED_PIN = 5;
+const int SERVO_PIN = 13;
 
-int baseSpeed = 150;
-int minIRL = 400, minIRR = 400, maxIRL = 600, maxIRR = 600;
-float KOEF_ERROR = 0.4;
-int servoOpenPosition = 50;
-int servoClosePosition = 110;
-int baseDelay = 500;
-int P=0;
-int crossDelay=1000;
+int baseSpeed = 100; // базовая скорость
+int minIRL = 200, minIRR = 200, maxIRL = 800, maxIRR = 800;
+float KOEF_ERROR = 0.4;             // уменьшаем или увеличиваем ошибку чтобы не колбасило робота
+int servoOpenPosition = 50;         // градус открытого серво
+int servoClosePosition = 120;       // градус закытого серво
+int baseDelay = 500;                // задержка между действиями
+int crossCount = 0;                 // количество перекрестков
+int crossDelay = 1000;              // то сколько проедет робот после того как датчики увидят перекресток
+int timeToMoveBackWithBanka = 2000; // время, которое робот едет назад с банкой
+int blackLimit = 600;               // все что ниже-черная линия
+unsigned long startTime = 0;
+int timeToCorrectTurn = 1000;
+int distanceToTakeBanka = 5;   // расстояние на котром надо взять банку
+int distanceToCheckBanka = 30; // расстояние на котром ищем банку
 
-void setup()
+void start()
 {
-
-  pinMode(DVIG_L_MOTOR_PIN, OUTPUT); // напр. мотора лев.
-  pinMode(SPEED_DVIG_L_MOTOR_PIN, OUTPUT); // скор. мотора лев.
-  pinMode(DVIG_R_MOTOR_PIN, OUTPUT); // напр. мотора прав.
-  pinMode(SPEED_DVIG_R_MOTOR_PIN, OUTPUT); // скор. мотора прав.
-  // pinMode(7, OUTPUT); // пинок дальномера uzdL - левого
-  pinMode(UZF_TRIGGER_PIN, OUTPUT); // пинок дальномера uzdF - фронтального
-  // pinMode(8, INPUT);  // эхо-прием дальномера uzdL - левого
-  pinMode(UZF_ECHO_PIN, INPUT); // эхо-прием дальномера uzdF - фронтального
-  pinMode(IR_SENSOR_L_PIN, INPUT);           // датчик ИК - А0
-  pinMode(IR_SENSOR_R_PIN, INPUT);           // датчик ИК - А1
- // pinMode(A2, INPUT);           // датчик ИК - А2
-initServo();
-#if DEBUG
-  debug_init();
-#else
-  logInit();
-#endif
-
   // Едем вперед пока не увидим поперечную черную линию
   while (!isOnCross())
   {
@@ -66,33 +54,78 @@ initServo();
   go(baseSpeed, baseSpeed, 300); // проезжаем поперечную черную линию пока черная линия трассы не окажется между датчиками
 }
 
-void moveBanka()
+void setup()
 {
 
-  while (uzdF() > 5)
+  pinMode(MOTOR_L_DIRECTION_PIN, OUTPUT); // напр. мотора лев.
+  pinMode(MOTOR_L_SPEED_PIN, OUTPUT);     // скор. мотора лев.
+  pinMode(MOTOR_R_DIRECTION_PIN, OUTPUT); // напр. мотора прав.
+  pinMode(MOTOR_R_SPEED_PIN, OUTPUT);     // скор. мотора прав.
+  // pinMode(7, OUTPUT); // пинок дальномера uzdL - левого
+  pinMode(UZF_TRIGGER_PIN, OUTPUT); // пинок дальномера uzdF - фронтального
+  // pinMode(8, INPUT);  // эхо-прием дальномера uzdL - левого
+  pinMode(UZF_ECHO_PIN, INPUT);    // эхо-прием дальномера uzdF - фронтального
+  pinMode(IR_SENSOR_L_PIN, INPUT); // датчик ИК - А0
+  pinMode(IR_SENSOR_R_PIN, INPUT); // датчик ИК - А1
+  pinMode(IR_SENSOR_M_PIN, INPUT); // датчик ИК - А2
+
+  initServo();
+#if DEBUG
+  debug_init();
+#else
+  logInit();
+#endif
+
+  start();
+}
+
+void moveBankaTake()
+{
+  while (uzdF() > distanceToTakeBanka)
   {
     preg();
   }
   go(0, 0, baseDelay);
   closeServo();
-  delay(baseDelay);
-  go(-baseSpeed, -baseSpeed, baseDelay*2);
+  go(-baseSpeed, -baseSpeed, timeToMoveBackWithBanka);
   right();
   right();
   while (!isOnCross())
   {
     preg();
   }
-  go(0, 0);
-  delay(baseDelay);
-  openServo();
-  go(-baseSpeed, -baseSpeed, baseDelay);
+  go(0, 0, baseDelay);
+
+  // while (isOnBlack(IR_SENSOR_M_PIN))
+  // {
+  //   preg();
+  // }
+  // go(0, 0, baseDelay);
+  // openServo();
+  // go(-baseSpeed, -baseSpeed, baseDelay);
+  // go(0, 0, baseDelay);
 }
 
-void finish(){
-  go(baseSpeed, baseSpeed, crossDelay*4);
-  go(0,0);
-  while (true){};
+void moveBankaPut()
+{
+  while (!isOnBlack(IR_SENSOR_M_PIN)) // если датчик посередине на белом отпускаем банку
+  {
+    preg();
+  }
+  go(baseSpeed, baseSpeed, crossDelay);
+  go(0, 0, baseDelay);
+  openServo();
+  //   go(-baseSpeed, -baseSpeed, crossDelay);
+  go(0, 0, baseDelay);
+}
+
+void finish()
+{
+  go(baseSpeed, baseSpeed, crossDelay * 4);
+  go(0, 0);
+  while (true)
+  {
+  };
 }
 
 void loop()
@@ -101,43 +134,38 @@ void loop()
   //   consoleLog(baseDelay*2); //выводим информацию в консоль
 #endif
 
-// test();
+  //   test();
 
   preg();
 
-  if (isOnCross())
+  if (isOnCross()) // наехал-ли робот на перекресток
   {
-    P++;
-    if (P==4)
+    crossCount++;
+    if (crossCount == 4)
     {
       finish();
     }
+    
     go(baseSpeed, baseSpeed, crossDelay);
     go(0, 0, baseDelay);
     right();
-    delay(baseDelay);
-    if (uzdF() < 30)
+
+    if (uzdF() < distanceToCheckBanka) // есть ли банка справа
     {
-      moveBanka();
-      delay(baseDelay);
-      right();
+      //  moveBankaTake();
+      //  moveBankaPut();
     }
-    else
+    else // иначе
     {
       right();
       right();
-      if (uzdF() < 30)
+      if (uzdF() < distanceToCheckBanka) // есть ли банка слева
       {
-        moveBanka();
-        go(-baseSpeed, -baseSpeed, baseDelay*1.5);
-        left();
-        preg();
+        //   moveBankaTake();
+        //  moveBankaPut();
+        go(-baseSpeed, -baseSpeed, baseDelay * 1.5);
       }
     }
-
-    // while (1)
-    // {
-    //   /* code */
-    // }
+    right();// если нету банки слева или поставили банку
   }
 }

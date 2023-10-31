@@ -5,10 +5,11 @@ extern const int UZF_ECHO_PIN;
 // Устанавливаем номера пинов для датчиков линии
 extern const int IR_SENSOR_L_PIN;
 extern const int IR_SENSOR_R_PIN;
-extern const int DVIG_L_MOTOR_PIN;
-extern const int SPEED_DVIG_L_MOTOR_PIN;
-extern const int DVIG_R_MOTOR_PIN;
-extern const int SPEED_DVIG_R_MOTOR_PIN;
+extern const int IR_SENSOR_M_PIN;
+extern const int MOTOR_L_DIRECTION_PIN;
+extern const int MOTOR_L_SPEED_PIN;
+extern const int MOTOR_R_DIRECTION_PIN;
+extern const int MOTOR_R_SPEED_PIN;
 extern const int SERVO_PIN;
 
 extern int baseSpeed;
@@ -17,5 +18,8 @@ extern float KOEF_ERROR;
 extern int baseDelay;
 extern int servoOpenPosition;
 extern int servoClosePosition;
+extern int blackLimit;
+extern unsigned long startTime;
+extern int timeToCorrectTurn;
 
 #endif

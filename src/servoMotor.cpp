@@ -17,14 +17,16 @@ void closeServo()
     servo.write(i);
     delay(20);
   }
+  delay(baseDelay);
 }
 
 void openServo()
 {
-  /*for (int i = servoClosePosition; i < servoOpenPosition; i++)
+  for (int i = servoClosePosition; i > servoOpenPosition; i--)
   {
     servo.write(i);
     delay(20);
-  }*/
-  servo.write(servoOpenPosition);
+  }
+  delay(baseDelay);
+  //servo.write(servoOpenPosition);
 }
