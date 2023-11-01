@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <header.h>
 #include <drive.h>
+#include <uzd.h>
 
 
 // Функция для нормализации значений ИК датчика
@@ -64,6 +65,16 @@ bool isOnCross()
   {
     result = true;
   }
+  return result;
+}
+
+bool checkBanka(){
+    bool result = false;
+  if (uzdF() < distanceToCheckBanka)
+  {
+    result = true; 
+  }
+  haveBanka=result;
   return result;
 }
 

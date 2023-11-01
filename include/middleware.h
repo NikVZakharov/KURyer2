@@ -5,5 +5,6 @@ void preg();
 int getIRSensorValue(int sensor);
 bool isOnCross();
 bool isOnBlack(int sensor);
+bool checkBanka();
 
 #endif

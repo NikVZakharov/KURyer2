@@ -18,7 +18,7 @@ void testServo()
     openServo();
 }
 
-int testIsOnBlack(){
+void testIsOnBlack(){
     Serial.print(isOnBlack(IR_SENSOR_L_PIN));
     Serial.print(" ");
     Serial.print(isOnBlack(IR_SENSOR_M_PIN));
@@ -27,12 +27,12 @@ int testIsOnBlack(){
     delay(baseDelay);
 }
 
-int testIsOnCross(){
+void testIsOnCross(){
     Serial.println(isOnCross());
     delay(baseDelay);
 }
 
-int testTurn(){
+void testTurn(){
     right();
     right();
     right();

@@ -3,6 +3,6 @@
 
 void go(int L, int R, int z=0);
 void left();
-void right();
+void right(bool fixPosition = true);
 
 #endif

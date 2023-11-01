@@ -21,5 +21,11 @@ extern int servoClosePosition;
 extern int blackLimit;
 extern unsigned long startTime;
 extern int timeToCorrectTurn;
+extern int distanceToTakeBanka; 
+extern int distanceToCheckBanka;
+extern int timeToMoveBackWithBanka;
+extern int crossCount;               
+extern int crossDelay;   
+extern bool haveBanka;  
 
 #endif

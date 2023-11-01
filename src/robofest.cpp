@@ -39,10 +39,11 @@ int crossCount = 0;                 // количество перекрестк
 int crossDelay = 1000;              // то сколько проедет робот после того как датчики увидят перекресток
 int timeToMoveBackWithBanka = 2000; // время, которое робот едет назад с банкой
 int blackLimit = 600;               // все что ниже-черная линия
-unsigned long startTime = 0;
-int timeToCorrectTurn = 1000;
+unsigned long startTime = 0; // Время начала таймера
+int timeToCorrectTurn = 1000; //Время в течении которого выравниваем машину после поворота
 int distanceToTakeBanka = 5;   // расстояние на котром надо взять банку
 int distanceToCheckBanka = 30; // расстояние на котром ищем банку
+bool haveBanka=false; //Флаг обнаружения банки -есть или нет банки на по направлению движения
 
 void start()
 {
@@ -116,6 +117,7 @@ void moveBankaPut()
   go(0, 0, baseDelay);
   openServo();
   //   go(-baseSpeed, -baseSpeed, crossDelay);
+  haveBanka=false; //снимаем флаг обнаружения банки
   go(0, 0, baseDelay);
 }
 
@@ -150,7 +152,7 @@ void loop()
     go(0, 0, baseDelay);
     right();
 
-    if (uzdF() < distanceToCheckBanka) // есть ли банка справа
+    if (checkBanka()) // есть ли банка справа
     {
       //  moveBankaTake();
       //  moveBankaPut();
@@ -159,13 +161,14 @@ void loop()
     {
       right();
       right();
-      if (uzdF() < distanceToCheckBanka) // есть ли банка слева
+      if (checkBanka()) // есть ли банка слева
       {
         //   moveBankaTake();
         //  moveBankaPut();
         go(-baseSpeed, -baseSpeed, baseDelay * 1.5);
       }
     }
-    right();// если нету банки слева или поставили банку
+    right(false);// поворачиваем направо, чтобы выйти на основную линию трассы если нету банки слева или поставили банку. 
+    //В функцию передаем false, чтобы не выравнивать машитну после поворота. Ее выравнит preg(), который будет вызван при езде вперед  
   }
 }

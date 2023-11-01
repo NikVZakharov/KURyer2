@@ -12,31 +12,39 @@ void go(int L, int R, int interval = 0)
   delay(interval);
 }
 
-void right()
+void right(bool fixPosition = true)
 {
-  go(baseSpeed, -baseSpeed,500);
+  go(baseSpeed, -baseSpeed, 500); // Поворачиваем так, чтобы левый ИК датчик сместился с белого на черную линию
   //  go(0, 0, baseDelay);
-  while (isOnBlack(IR_SENSOR_L_PIN))
+  while (isOnBlack(IR_SENSOR_L_PIN)) // Поворачиваем пока левый ИК датчик на черной линии
   {
     go(baseSpeed, -baseSpeed);
   }
-   // go(0, 0, baseDelay/3);
-  go(baseSpeed, -baseSpeed,500);
+  // go(0, 0, baseDelay/3);
+  go(baseSpeed, -baseSpeed, 500); // Поворачиваем так, чтобы левый ИК датчик сместился с черной линии на белое поле
   //  go(0, 0, baseDelay);
-   while (!isOnBlack(IR_SENSOR_L_PIN))
+  while (!isOnBlack(IR_SENSOR_L_PIN)) // Поворачиваем пока левый ИК датчик на белом поле
   {
     go(baseSpeed, -baseSpeed);
+    if (checkBanka()) // Если увидели банку останавливаем поворот
+    {
+      //return; //Выход из функции
+    }
   }
 
-  go(0, 0, baseDelay/3);
-  startTime = millis();
-  while (millis() - startTime < timeToCorrectTurn)
+  if (fixPosition) // Корректируем положение машины относительно черной линии
   {
-    preg();
+    go(0, 0, baseDelay / 3);                         // Ждем пока закончится импульс инерции при повороте
+    startTime = millis();                            // Считываем текущее время
+    while (millis() - startTime < timeToCorrectTurn) // Пока текущее время - время старта таймера меньше интервала выравнивания едем по preg()
+    {
+      preg();
+    }
+    go(0, 0, baseDelay / 3);                           // Ждем пока закончится импульс инерции
+    go(-baseSpeed, -baseSpeed, timeToCorrectTurn * 2); // Едем назад,чтобы вернуться на перекресток
   }
-  go(0, 0, baseDelay/3);
-  go(-baseSpeed, -baseSpeed, timeToCorrectTurn*2);
-  go(0, 0, baseDelay);
+
+  go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
 }
 
 void left()
