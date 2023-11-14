@@ -15,6 +15,7 @@ int testUZDF()
 void testServo()
 {
     closeServo();
+    delay(baseDelay);
     openServo();
 }
 
@@ -49,7 +50,7 @@ void test()
 
      //testUZDF(); // тест переднего УЗ датчика
 
-     //  testServo(); //тест сервопривода
+       //testServo(); //тест сервопривода
        //testIsOnBlack();
     //   testIsOnCross();
    // testTurn();

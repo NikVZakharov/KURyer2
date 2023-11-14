@@ -14,14 +14,14 @@ void go(int L, int R, int interval = 0)
 
 void right(bool fixPosition = true)
 {
-  go(baseSpeed, -baseSpeed, 500); // Поворачиваем так, чтобы левый ИК датчик сместился с белого на черную линию
+  go(baseSpeed, -baseSpeed, 1000); // Поворачиваем так, чтобы левый ИК датчик сместился с белого на черную линию
   //  go(0, 0, baseDelay);
   while (isOnBlack(IR_SENSOR_L_PIN)) // Поворачиваем пока левый ИК датчик на черной линии
   {
     go(baseSpeed, -baseSpeed);
   }
   // go(0, 0, baseDelay/3);
-  go(baseSpeed, -baseSpeed, 500); // Поворачиваем так, чтобы левый ИК датчик сместился с черной линии на белое поле
+  go(baseSpeed, -baseSpeed, 1000); // Поворачиваем так, чтобы левый ИК датчик сместился с черной линии на белое поле
   //  go(0, 0, baseDelay);
   while (!isOnBlack(IR_SENSOR_L_PIN)) // Поворачиваем пока левый ИК датчик на белом поле
   {
@@ -41,7 +41,7 @@ void right(bool fixPosition = true)
       preg();
     }
     go(0, 0, baseDelay / 3);                           // Ждем пока закончится импульс инерции
-    go(-baseSpeed, -baseSpeed, timeToCorrectTurn * 2); // Едем назад,чтобы вернуться на перекресток
+    go(-baseSpeed, -baseSpeed, timeToCorrectTurn); // Едем назад,чтобы вернуться на перекресток
   }
 
   go(0, 0, baseDelay); // Ждем пока закончится импульс инерции

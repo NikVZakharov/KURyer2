@@ -29,21 +29,21 @@ const int MOTOR_R_DIRECTION_PIN = 4;
 const int MOTOR_R_SPEED_PIN = 5;
 const int SERVO_PIN = 13;
 
-int baseSpeed = 100; // базовая скорость
+int baseSpeed = 150; // базовая скорость
 int minIRL = 200, minIRR = 200, maxIRL = 800, maxIRR = 800;
 float KOEF_ERROR = 0.4;             // уменьшаем или увеличиваем ошибку чтобы не колбасило робота
-int servoOpenPosition = 50;         // градус открытого серво
-int servoClosePosition = 120;       // градус закытого серво
-int baseDelay = 500;                // задержка между действиями
+int servoOpenPosition = 60;         // градус открытого серво
+int servoClosePosition = 130;       // градус закытого серво
+int baseDelay = 1000;               // задержка между действиями
 int crossCount = 0;                 // количество перекрестков
-int crossDelay = 1000;              // то сколько проедет робот после того как датчики увидят перекресток
-int timeToMoveBackWithBanka = 2000; // время, которое робот едет назад с банкой
+int crossDelay = 500;               // то сколько проедет робот после того как датчики увидят перекресток
+int timeToMoveBackWithBanka = 1000; // время, которое робот едет назад с банкой
 int blackLimit = 600;               // все что ниже-черная линия
-unsigned long startTime = 0; // Время начала таймера
-int timeToCorrectTurn = 1000; //Время в течении которого выравниваем машину после поворота
-int distanceToTakeBanka = 5;   // расстояние на котром надо взять банку
-int distanceToCheckBanka = 30; // расстояние на котром ищем банку
-bool haveBanka=false; //Флаг обнаружения банки -есть или нет банки на по направлению движения
+unsigned long startTime = 0;        // Время начала таймера
+float timeToCorrectTurn = 1000;     // Время в течении которого выравниваем машину после поворота
+int distanceToTakeBanka = 5;        // расстояние на котром надо взять банку
+int distanceToCheckBanka = 30;      // расстояние на котром ищем банку
+bool haveBanka = false;             // Флаг обнаружения банки -есть или нет банки на по направлению движения
 
 void start()
 {
@@ -57,7 +57,6 @@ void start()
 
 void setup()
 {
-
   pinMode(MOTOR_L_DIRECTION_PIN, OUTPUT); // напр. мотора лев.
   pinMode(MOTOR_L_SPEED_PIN, OUTPUT);     // скор. мотора лев.
   pinMode(MOTOR_R_DIRECTION_PIN, OUTPUT); // напр. мотора прав.
@@ -66,9 +65,9 @@ void setup()
   pinMode(UZF_TRIGGER_PIN, OUTPUT); // пинок дальномера uzdF - фронтального
   // pinMode(8, INPUT);  // эхо-прием дальномера uzdL - левого
   pinMode(UZF_ECHO_PIN, INPUT);    // эхо-прием дальномера uzdF - фронтального
-  pinMode(IR_SENSOR_L_PIN, INPUT); // датчик ИК - А0
-  pinMode(IR_SENSOR_R_PIN, INPUT); // датчик ИК - А1
-  pinMode(IR_SENSOR_M_PIN, INPUT); // датчик ИК - А2
+  pinMode(IR_SENSOR_L_PIN, INPUT); // пин датчика ИК - А0
+  pinMode(IR_SENSOR_R_PIN, INPUT); // пин датчика ИК - А1
+  pinMode(IR_SENSOR_M_PIN, INPUT); // пин датчика ИК - А2
 
   initServo();
 #if DEBUG
@@ -77,47 +76,46 @@ void setup()
   logInit();
 #endif
 
-  start();
+  // start();
+   openServo();
 }
 
 void moveBankaTake()
 {
-  while (uzdF() > distanceToTakeBanka)
+  while (uzdF() > distanceToTakeBanka) // едем вперед на preg() пока расстояние до банки не будет меньше  distanceToTakeBanka
   {
     preg();
   }
-  go(0, 0, baseDelay);
-  closeServo();
-  go(-baseSpeed, -baseSpeed, timeToMoveBackWithBanka);
-  right();
-  right();
+  go(0, 0, baseDelay);                                 // Ждем пока закончится импульс инерции
+  closeServo();                                        // закрываем сервопривод
   while (!isOnCross())
   {
-    preg();
+    go(-baseSpeed, -baseSpeed);
   }
+  go(baseSpeed, baseSpeed, baseDelay);
+  right();
+  right();
   go(0, 0, baseDelay);
-
-  // while (isOnBlack(IR_SENSOR_M_PIN))
+  // while (!isOnCross()) // Едем вперед пока не доедем до перекрестка
   // {
   //   preg();
   // }
-  // go(0, 0, baseDelay);
-  // openServo();
-  // go(-baseSpeed, -baseSpeed, baseDelay);
-  // go(0, 0, baseDelay);
+  // go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
 }
 
 void moveBankaPut()
 {
-  while (!isOnBlack(IR_SENSOR_M_PIN)) // если датчик посередине на белом отпускаем банку
+  while (isOnBlack(IR_SENSOR_M_PIN))
   {
     preg();
   }
-  go(baseSpeed, baseSpeed, crossDelay);
   go(0, 0, baseDelay);
   openServo();
-  //   go(-baseSpeed, -baseSpeed, crossDelay);
-  haveBanka=false; //снимаем флаг обнаружения банки
+  while (!isOnCross())
+  {
+    go(-baseSpeed, -baseSpeed);
+  }
+  go(baseSpeed, baseSpeed, baseDelay/2);
   go(0, 0, baseDelay);
 }
 
@@ -132,43 +130,70 @@ void finish()
 
 void loop()
 {
-#if !DEBUG
-  //   consoleLog(baseDelay*2); //выводим информацию в консоль
-#endif
-
-  //   test();
-
+  // test();
+ 
   preg();
-
-  if (isOnCross()) // наехал-ли робот на перекресток
+  if (isOnCross())
   {
-    crossCount++;
-    if (crossCount == 4)
-    {
-      finish();
-    }
-    
     go(baseSpeed, baseSpeed, crossDelay);
     go(0, 0, baseDelay);
     right();
-
-    if (checkBanka()) // есть ли банка справа
+    if (uzdF() < distanceToCheckBanka)
     {
-      //  moveBankaTake();
-      //  moveBankaPut();
+      moveBankaTake();
+      moveBankaPut();
     }
-    else // иначе
+    else
     {
+
       right();
       right();
-      if (checkBanka()) // есть ли банка слева
+      if (uzdF() < distanceToCheckBanka)
       {
-        //   moveBankaTake();
-        //  moveBankaPut();
-        go(-baseSpeed, -baseSpeed, baseDelay * 1.5);
+        moveBankaTake();
+        moveBankaPut();
       }
     }
-    right(false);// поворачиваем направо, чтобы выйти на основную линию трассы если нету банки слева или поставили банку. 
-    //В функцию передаем false, чтобы не выравнивать машитну после поворота. Ее выравнит preg(), который будет вызван при езде вперед  
+    right();
   }
 }
+
+// #if !DEBUG
+//   //   consoleLog(baseDelay*2); //выводим информацию в консоль
+// #endif
+
+//   //   test();
+
+//   preg();
+
+//   if (isOnCross()) // наехал-ли робот на перекресток
+//   {
+//     crossCount++; //количество пройденных перекрестков
+//     if (crossCount == 4) //если доехали до 4 перекрестка - финишируем
+//     {
+//       finish();
+//     }
+
+//     go(baseSpeed, baseSpeed, crossDelay); //проезжаем вперед по поперечной черной линии, чтобы колесами наехать на перекресток
+//     go(0, 0, baseDelay);  // Ждем пока закончится импульс инерции
+//     right();
+
+//     if (checkBanka()) // есть ли банка справа
+//     {
+//      //   moveBankaTake(); //Забираем банку
+//       //  moveBankaPut();
+//     }
+//     else // иначе
+//     {
+//       right(); //Поворачиваемся в противоположную сторону (180 градусов)
+//       right();
+//       if (checkBanka()) // есть ли банка слева
+//       {
+//        //    moveBankaTake(); //Забираем банку
+//         //  moveBankaPut();
+//       //  go(-baseSpeed, -baseSpeed, baseDelay * 1.5);
+//       }
+//     }
+//     right(false);// поворачиваем направо, чтобы выйти на основную линию трассы если нету банки справа, слева или поставили банку.
+//     //В функцию передаем false, чтобы не выравнивать машитну после поворота. Ее выравнит preg(), который будет вызван при езде вперед
+//   }

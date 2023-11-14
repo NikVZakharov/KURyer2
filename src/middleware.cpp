@@ -41,9 +41,9 @@ void preg() {
   d2 = map(d2, minIRR, maxIRR, 0, 1000);
 
   int E = d1 - d2;
-  float K = 0.4;
-  int M1 = baseSpeed + E * K; M1 = constrain(M1, -255, 255);
-  int M2 = baseSpeed - E * K; M2 = constrain(M2, -255, 255);
+  
+  int M1 = baseSpeed + E * KOEF_ERROR; M1 = constrain(M1, -250, 250);
+  int M2 = baseSpeed - E * KOEF_ERROR; M2 = constrain(M2, -250, 250);
 
   go(M1, M2);
 }
