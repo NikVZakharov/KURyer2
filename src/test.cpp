@@ -46,13 +46,13 @@ void test()
 
      //go(baseSpeed, -baseSpeed); //тест моторов
 
-    //preg();
+    //preg(baseSpeed);
 
      //testUZDF(); // тест переднего УЗ датчика
 
        //testServo(); //тест сервопривода
        //testIsOnBlack();
-    //   testIsOnCross();
+      // testIsOnCross();
    // testTurn();
 }
 

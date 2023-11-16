@@ -26,6 +26,8 @@ extern int distanceToCheckBanka;
 extern int timeToMoveBackWithBanka;
 extern int crossCount;               
 extern int crossDelay;   
-extern bool haveBanka;  
+extern bool haveBanka;
+extern int gainCoeff;
+extern int maxErrorTurnFix;
 
 #endif

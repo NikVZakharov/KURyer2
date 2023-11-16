@@ -38,12 +38,14 @@ int baseDelay = 1000;               // задержка между действ�
 int crossCount = 0;                 // количество перекрестков
 int crossDelay = 500;               // то сколько проедет робот после того как датчики увидят перекресток
 int timeToMoveBackWithBanka = 1000; // время, которое робот едет назад с банкой
-int blackLimit = 600;               // все что ниже-черная линия
+int blackLimit = 500;               // все что ниже-черная линия
 unsigned long startTime = 0;        // Время начала таймера
 float timeToCorrectTurn = 1000;     // Время в течении которого выравниваем машину после поворота
 int distanceToTakeBanka = 5;        // расстояние на котром надо взять банку
 int distanceToCheckBanka = 30;      // расстояние на котром ищем банку
 bool haveBanka = false;             // Флаг обнаружения банки -есть или нет банки на по направлению движения
+int gainCoeff=50; //Коэффициент усиления П регулятора при выравнивании после поворота
+int maxErrorTurnFix=5; //Макисмальная ошибка до которой идет выравнивание после поворота
 
 void start()
 {
@@ -76,15 +78,16 @@ void setup()
   logInit();
 #endif
 
-  // start();
-   openServo();
+  start();
 }
 
 void moveBankaTake()
 {
   while (uzdF() > distanceToTakeBanka) // едем вперед на preg() пока расстояние до банки не будет меньше  distanceToTakeBanka
   {
-    preg();
+    preg(baseSpeed);
+  //go(baseSpeed, baseSpeed);
+  
   }
   go(0, 0, baseDelay);                                 // Ждем пока закончится импульс инерции
   closeServo();                                        // закрываем сервопривод
@@ -107,7 +110,7 @@ void moveBankaPut()
 {
   while (isOnBlack(IR_SENSOR_M_PIN))
   {
-    preg();
+    preg(baseSpeed);
   }
   go(0, 0, baseDelay);
   openServo();
@@ -130,33 +133,54 @@ void finish()
 
 void loop()
 {
-  // test();
+   //test();
  
-  preg();
+  preg(baseSpeed);
   if (isOnCross())
   {
     go(baseSpeed, baseSpeed, crossDelay);
     go(0, 0, baseDelay);
     right();
-    if (uzdF() < distanceToCheckBanka)
-    {
-      moveBankaTake();
-      moveBankaPut();
-    }
-    else
-    {
+          right();
+      right();
+            right();
 
-      right();
-      right();
-      if (uzdF() < distanceToCheckBanka)
-      {
-        moveBankaTake();
-        moveBankaPut();
-      }
-    }
-    right();
+
+    // if (uzdF() < distanceToCheckBanka)
+    // {
+    //  // moveBankaTake();
+    //   //moveBankaPut();
+      
+    // }
+    // else
+    // {
+
+    //   right();
+    //   right();
+    //   if (uzdF() < distanceToCheckBanka)
+    //   {
+    //    // moveBankaTake();
+    //    // moveBankaPut();
+    //   }
+    // }
+    // right(false);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // #if !DEBUG
 //   //   consoleLog(baseDelay*2); //выводим информацию в консоль
