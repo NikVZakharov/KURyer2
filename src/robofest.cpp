@@ -137,9 +137,27 @@ void finish()
 
 void loop()
 {
-  // test();
+   preg(baseSpeed);
+   while (uzdF()>distanceToCheckBanka/2)
+   {
+    preg(baseSpeed);
+   }
+   go(0,0,baseDelay);
+   go(-baseSpeed,baseSpeed,baseDelay);
+   go(0,0,baseDelay);
+   go(baseSpeed,baseSpeed,baseDelay*1.5);
+   go(baseSpeed,-baseSpeed,baseDelay);
+   go(baseSpeed,baseSpeed,baseDelay*3);
+   go(baseSpeed,-baseSpeed,baseDelay);
+   while (IR_SENSOR_R_PIN>blackLimit)
+   {
+    go(baseSpeed,baseSpeed);
+   }
+   preg(baseSpeed);
+   
+// test();
 
-  preg(baseSpeed);
+ /* preg(baseSpeed);
   if (isOnCross())
   {
     crossCount++;
@@ -170,9 +188,13 @@ void loop()
       }
     }
     
-  }
+  }*/
 }
 
 // crossCount=crossCount+1;
 //   Serial.println(crossCount);
 //   delay(500);
+
+
+
+ 
