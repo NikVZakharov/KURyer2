@@ -30,6 +30,6 @@ extern int crossDelay;
 extern bool haveBanka;
 extern int gainCoeff;
 extern int maxErrorTurnFix;
-
+extern int obezdDelay;
 
 #endif

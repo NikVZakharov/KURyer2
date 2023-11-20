@@ -47,6 +47,7 @@ int distanceToCheckBanka = 30;      // расстояние на котром и
 bool haveBanka = false;             // Флаг обнаружения банки -есть или нет банки на по направлению движения
 int gainCoeff = 100;                // Коэффициент усиления П регулятора при выравнивании после поворота
 int maxErrorTurnFix = 10;           // Макисмальная ошибка до которой идет выравнивание после поворота
+int obezdDelay = 1500;              // задержка при объезде банки
 
 void start()
 {
@@ -135,66 +136,68 @@ void finish()
   }
 }
 
-void loop()
+void obezdBanki()
 {
-   preg(baseSpeed);
-   while (uzdF()>distanceToCheckBanka/2)
-   {
-    preg(baseSpeed);
-   }
-   go(0,0,baseDelay);
-   go(-baseSpeed,baseSpeed,baseDelay);
-   go(0,0,baseDelay);
-   go(baseSpeed,baseSpeed,baseDelay*1.5);
-   go(baseSpeed,-baseSpeed,baseDelay);
-   go(baseSpeed,baseSpeed,baseDelay*3);
-   go(baseSpeed,-baseSpeed,baseDelay);
-   while (IR_SENSOR_R_PIN>blackLimit)
-   {
-    go(baseSpeed,baseSpeed);
-   }
-   preg(baseSpeed);
-   
-// test();
-
- /* preg(baseSpeed);
-  if (isOnCross())
+  if (uzdF() < distanceToCheckBanka / 1.6)
   {
-    crossCount++;
-    finish();
-    go(baseSpeed, baseSpeed, crossDelay);
     go(0, 0, baseDelay);
-    right();
+    go(-baseSpeed, baseSpeed, obezdDelay / 2);
+    go(0, 0, baseDelay);
+    go(baseSpeed, baseSpeed, obezdDelay * 1.4);
+    go(baseSpeed, -baseSpeed, obezdDelay / 1.9);
+    go(baseSpeed, baseSpeed, obezdDelay * 1.5);
+    go(baseSpeed, -baseSpeed, obezdDelay / 2);
+    while (IR_SENSOR_L_PIN > blackLimit)
+    {
+      go(baseSpeed, baseSpeed);
+    }
+  }
+}
 
+void perekrestok()
+{
+  crossCount++;
+  finish();
+  go(baseSpeed, baseSpeed, crossDelay);
+  go(0, 0, baseDelay);
+  right();
+
+  if (uzdF() < distanceToCheckBanka)
+  {
+    moveBankaTake();
+    moveBankaPut();
+    right(false);
+  }
+  else
+  {
+    right();
+    right();
     if (uzdF() < distanceToCheckBanka)
     {
       moveBankaTake();
       moveBankaPut();
-      right(false);
+      left();
     }
     else
     {
       right();
-      right();
-      if (uzdF() < distanceToCheckBanka)
-      {
-        moveBankaTake();
-        moveBankaPut();
-        left();
-      }
-      else
-      {
-        right();
-      }
     }
-    
-  }*/
+  }
+}
+
+void loop()
+{
+
+  // test();
+
+  preg(baseSpeed);
+  // if (isOnCross())
+  //{
+  // perekrestok();
+  //}
+  obezdBanki();
 }
 
 // crossCount=crossCount+1;
 //   Serial.println(crossCount);
 //   delay(500);
-
-
-
- 
