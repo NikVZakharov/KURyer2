@@ -29,6 +29,7 @@ const int MOTOR_R_DIRECTION_PIN = 4;
 const int MOTOR_R_SPEED_PIN = 5;
 const int SERVO_PIN = 13;
 const int FINISH_CROSS_COUNT = 4;
+const float MOTOR_R_SPEED = 1.45;
 
 int baseSpeed = 150; // базовая скорость
 int minIRL = 200, minIRR = 200, maxIRL = 800, maxIRR = 800;
@@ -48,6 +49,8 @@ bool haveBanka = false;             // Флаг обнаружения банк�
 int gainCoeff = 100;                // Коэффициент усиления П регулятора при выравнивании после поворота
 int maxErrorTurnFix = 10;           // Макисмальная ошибка до которой идет выравнивание после поворота
 int obezdDelay = 1500;              // задержка при объезде банки
+int finishDelay = 2000;             // задержка при финишировании
+int povorotDelay = 1000;
 
 void start()
 {
@@ -80,7 +83,7 @@ void setup()
   logInit();
 #endif
 
-  start();
+ // start();
 }
 
 void moveBankaTake()
@@ -128,7 +131,7 @@ void finish()
 {
   if (crossCount == FINISH_CROSS_COUNT)
   {
-    go(baseSpeed, baseSpeed, crossDelay * 3);
+    go(baseSpeed, baseSpeed, finishDelay * 4);
     go(0, 0);
     while (true)
     {
@@ -141,13 +144,13 @@ void obezdBanki()
   if (uzdF() < distanceToCheckBanka / 1.6)
   {
     go(0, 0, baseDelay);
-    go(-baseSpeed, baseSpeed, obezdDelay / 2);
+    go(-baseSpeed, baseSpeed, povorotDelay); // поворачиваем влево пока мы на линии с банкой
     go(0, 0, baseDelay);
-    go(baseSpeed, baseSpeed, obezdDelay * 1.4);
-    go(baseSpeed, -baseSpeed, obezdDelay / 1.9);
-    go(baseSpeed, baseSpeed, obezdDelay * 1.5);
-    go(baseSpeed, -baseSpeed, obezdDelay / 2);
-    while (IR_SENSOR_L_PIN > blackLimit)
+    go(baseSpeed, baseSpeed, obezdDelay);       // едем вперед секунду чтобы уйти с линии где банка
+    go(baseSpeed, -baseSpeed, povorotDelay);    // поворачиваем вправа
+    go(baseSpeed, baseSpeed, obezdDelay * 1.5); // едем вперед чтобы обехать банку
+    go(baseSpeed, -baseSpeed, povorotDelay);    // поворачиваем вправо
+    while (IR_SENSOR_L_PIN > blackLimit)        // едем пока не вернемся на линию
     {
       go(baseSpeed, baseSpeed);
     }
@@ -185,19 +188,103 @@ void perekrestok()
   }
 }
 
+void doezd()
+{
+  go(baseSpeed, baseSpeed, crossDelay);
+  go(0, 0, baseDelay);
+}
+
 void loop()
 {
 
-  // test();
+   test();
 
-  preg(baseSpeed);
+  // preg(baseSpeed);
   // if (isOnCross())
-  //{
-  // perekrestok();
-  //}
-  obezdBanki();
-}
+  // {
+  //   crossCount++;
+  //   if (crossCount == 1) // на перекрестке 2
+  //   {
+  //     doezd();
+  //     right();
+  //   }
 
-// crossCount=crossCount+1;
-//   Serial.println(crossCount);
-//   delay(500);
+  //   if (crossCount == 2) // на перекрестке 6
+  //   {
+  //     doezd();
+  //     right();
+  //   }
+
+  //   if (crossCount == 3)
+  //   {
+  //     go(baseSpeed, baseSpeed, crossDelay * 2); // на перекрестке 7
+  //     go(0, 0, baseDelay);
+  //   }
+
+  //   if (crossCount == 4) // на перекрестке 9
+  //   {
+  //     go(baseSpeed, baseSpeed, crossDelay * 2);
+  //     go(0, 0, baseDelay);
+  //   }
+
+  //   if (crossCount == 5) // на перекрестке 11
+  //   {
+  //     doezd();
+  //     right();
+  //   }
+
+  //   if (crossCount == 6) // на перекрестке 12
+  //   {
+  //     doezd();
+  //     right();
+  //     right();
+  //   }
+
+  //   if (crossCount == 7) // на перекрестке 11
+  //   {
+  //     doezd();
+  //     right();
+  //   }
+
+  //   if (crossCount == 8) // на перекрестке 13
+  //   {
+  //     doezd();
+  //     right();
+  //     right();
+  //   }
+
+  //   if (crossCount == 9) // на перекрестке 11
+  //   {
+  //     doezd();
+  //     right();
+  //   }
+
+  //   if (crossCount == 10) // на перекрестке 5
+  //   {
+  //     doezd();
+  //     right();
+  //   }
+
+  //   if (crossCount==11)
+  //   {
+  //     go(baseSpeed, baseSpeed, crossDelay * 2); // на перекрестке 3
+  //     go(0, 0, baseDelay);
+  //   }
+    
+
+  //   if (crossCount == 12) // на перекрестке 4
+  //   {
+  //     doezd();
+  //     right();
+  //     right();
+  //   }
+
+  //   if (crossCount == 13) // на перекрестке 3
+  //   {
+  //     doezd();
+  //     right();
+  //   }
+  // }
+
+  // obezdBanki();
+}

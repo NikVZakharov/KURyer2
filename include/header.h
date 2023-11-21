@@ -12,6 +12,8 @@ extern const int MOTOR_R_DIRECTION_PIN;
 extern const int MOTOR_R_SPEED_PIN;
 extern const int SERVO_PIN;
 extern const int FINISH_CROSS_COUNT;
+extern const float MOTOR_R_SPEED;
+
 
 extern int baseSpeed;
 extern int minIRL, minIRR , maxIRL, maxIRR ;
@@ -31,5 +33,10 @@ extern bool haveBanka;
 extern int gainCoeff;
 extern int maxErrorTurnFix;
 extern int obezdDelay;
+extern int finishDelay;
+extern int povorotDelay;
+
+
+
 
 #endif
