@@ -54,8 +54,8 @@ void testTurn(){
 
 void test()
 {
-testIRSensors();
-     //go(baseSpeed, -baseSpeed); //тест моторов
+//testIRSensors();
+     go(baseSpeed, baseSpeed); //тест моторов
 
     //preg(baseSpeed);
 

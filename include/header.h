@@ -12,7 +12,7 @@ extern const int MOTOR_R_DIRECTION_PIN;
 extern const int MOTOR_R_SPEED_PIN;
 extern const int SERVO_PIN;
 extern const int FINISH_CROSS_COUNT;
-extern const float MOTOR_R_SPEED;
+extern const float KOEFF_FIX_MOTOR_R_SPEED;
 
 
 extern int baseSpeed;

@@ -7,5 +7,5 @@ bool isOnCross();
 bool isOnBlack(int sensor);
 bool checkBanka();
 int currentError();
-
+void fixPositionAfterTurn();
 #endif

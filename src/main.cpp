@@ -29,7 +29,7 @@ const int MOTOR_R_DIRECTION_PIN = 4;
 const int MOTOR_R_SPEED_PIN = 5;
 const int SERVO_PIN = 13;
 const int FINISH_CROSS_COUNT = 4;
-const float MOTOR_R_SPEED = 1.45;
+const float KOEFF_FIX_MOTOR_R_SPEED = 1.45;
 
 int baseSpeed = 150; // базовая скорость
 int minIRL = 200, minIRR = 200, maxIRL = 800, maxIRR = 800;
@@ -156,7 +156,7 @@ void obezdBanki()
     }
   }
 }
-
+//перемещение банки на другую сторону перекрестка
 void perekrestok()
 {
   crossCount++;
