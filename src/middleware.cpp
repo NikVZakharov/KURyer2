@@ -94,12 +94,12 @@ void fixPositionAfterTurn()
   // {
   //   go(0, 0, baseDelay / 3);                         // Ждем пока закончится импульс инерции при повороте
   //   startTime = millis();                            // Считываем текущее время
-  //   while (millis() - startTime < timeToCorrectTurn) // Пока текущее время - время старта таймера меньше интервала выравнивания едем по preg()
+  //   while (millis() - startTime < timeToMoveBanka) // Пока текущее время - время старта таймера меньше интервала выравнивания едем по preg()
   //   {
   //     preg();
   //   }
   //   go(0, 0, baseDelay / 3);                           // Ждем пока закончится импульс инерции
-  //   go(-baseSpeed, -baseSpeed, timeToCorrectTurn); // Едем назад,чтобы вернуться на перекресток
+  //   go(-baseSpeed, -baseSpeed, timeToMoveBanka); // Едем назад,чтобы вернуться на перекресток
   // }
 }
 

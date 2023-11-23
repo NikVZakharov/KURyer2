@@ -23,7 +23,7 @@ extern int servoOpenPosition;
 extern int servoClosePosition;
 extern int blackLimit;
 extern unsigned long startTime;
-extern float timeToCorrectTurn;
+extern float timeToMoveBanka;
 extern int distanceToTakeBanka; 
 extern int distanceToCheckBanka;
 extern int timeToMoveBackWithBanka;
