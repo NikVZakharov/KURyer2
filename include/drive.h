@@ -8,7 +8,7 @@ void right();
 void start();
 void finish();
 void doezd();
-void pregSomeTime(int timeToMove);
+void pregSomeTime(unsigned long timeToMove);
 void fixPositionAfterTurn();
 
 #endif

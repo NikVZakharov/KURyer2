@@ -31,6 +31,7 @@ const int SERVO_PIN = 13;
 const int FINISH_CROSS_COUNT = 4;
 const float KOEFF_FIX_MOTOR_R_SPEED = 1.2;
 const bool FIXPOSITION = true; // выравниваемся на повороте или нет
+const int MAX_MOTOR_SPEED=250;
 
 int baseSpeed = 150; // базовая скорость
 int minIRL = 200, minIRR = 200, maxIRL = 800, maxIRR = 800;

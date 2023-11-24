@@ -13,27 +13,14 @@ void go(int L, int R, int interval = 0,bool fixMotor=true)
 }
 void preg(int speed)
 {
+  int p_gain = (speed == 0) ? KOEF_ERROR * gainCoeff : KOEF_ERROR;
 
-  float p_gain;
-  int E;
-  p_gain = (speed == 0) ? KOEF_ERROR * gainCoeff : KOEF_ERROR;
-
-  // int d1 = analogRead(IR_SENSOR_L_PIN);
-  // int d2 = analogRead(IR_SENSOR_R_PIN);
-
-  // if (d1 < minIRL) minIRL = d1;
-  // if (d2 < minIRR) minIRR = d2;
-  // if (d1 > maxIRL) maxIRL = d1;
-  // if (d2 > maxIRR) maxIRR = d2;
-  // d1 = map(d1, minIRL, maxIRL, 0, 1000);
-  // d2 = map(d2, minIRR, maxIRR, 0, 1000);
-
-  E = currentError();
+  int E = currentError();
 
   int M1 = speed + E * p_gain;
-  M1 = constrain(M1, -250, 250);
+  M1 = constrain(M1, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
   int M2 = speed - E * p_gain;
-  M2 = constrain(M2, -250, 250);
+  M2 = constrain(M2, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
   go(M1, M2,0,false);
 }
 
@@ -109,7 +96,7 @@ void left()
   go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
 }
 
-void pregSomeTime(int timeToMove)
+void pregSomeTime(unsigned long timeToMove)
 {
   startTime = millis();                     // Считываем текущее время
   while (millis() - startTime < timeToMove) // Пока текущее время - время старта таймера меньше интервала выравнивания едем по preg()

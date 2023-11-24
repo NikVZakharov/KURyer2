@@ -14,6 +14,7 @@ extern const int SERVO_PIN;
 extern const int FINISH_CROSS_COUNT;
 extern const float KOEFF_FIX_MOTOR_R_SPEED;
 extern const bool FIXPOSITION;
+extern const int MAX_MOTOR_SPEED;
 
 extern int baseSpeed;
 extern int minIRL, minIRR, maxIRL, maxIRR;
