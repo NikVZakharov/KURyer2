@@ -55,13 +55,13 @@ void testTurn(){
 void test()
 {
 //testIRSensors();
-     go(baseSpeed, baseSpeed); //тест моторов
+    // go(baseSpeed, baseSpeed); //тест моторов
 
     //preg(baseSpeed);
 
      //testUZDF(); // тест переднего УЗ датчика
 
-       //testServo(); //тест сервопривода
+       testServo(); //тест сервопривода
        //testIsOnBlack();
       // testIsOnCross();
    // testTurn();

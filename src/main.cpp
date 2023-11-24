@@ -29,7 +29,7 @@ const int MOTOR_R_DIRECTION_PIN = 4;
 const int MOTOR_R_SPEED_PIN = 5;
 const int SERVO_PIN = 13;
 const int FINISH_CROSS_COUNT = 4;
-const float KOEFF_FIX_MOTOR_R_SPEED = 1.45;
+const float KOEFF_FIX_MOTOR_R_SPEED = 1.2;
 const bool FIXPOSITION = true; // выравниваемся на повороте или нет
 
 int baseSpeed = 150; // базовая скорость
@@ -53,15 +53,7 @@ int obezdDelay = 1500;              // задержка при объезде б
 int finishDelay = 2000;             // задержка при финишировании
 int povorotDelay = 1000;            // задержка при повороте на 90 градусов
 
-void start()
-{
-  // Едем вперед пока не увидим поперечную черную линию
-  while (!isOnCross())
-  {
-    go(baseSpeed, baseSpeed);
-  }
-  go(baseSpeed, baseSpeed, 300); // проезжаем поперечную черную линию пока черная линия трассы не окажется между датчиками
-}
+
 
 void setup()
 {
@@ -116,13 +108,9 @@ void moveBankaPut()
   // {
   //   preg(baseSpeed);
   // }
-  startTime = millis();                          // Считываем текущее время
-  while (millis() - startTime < timeToMoveBanka) // Пока текущее время - время старта таймера меньше интервала выравнивания едем по preg()
-  {
-    preg(baseSpeed);
-  }
+  pregSomeTime(timeToMoveBanka);
 
-  go(0, 0, baseDelay);
+  //go(0, 0, baseDelay);
   openServo();
   while (!isOnCross())
   {
@@ -132,72 +120,7 @@ void moveBankaPut()
   go(0, 0, baseDelay);
 }
 
-void finish()
-{
-  if (crossCount == FINISH_CROSS_COUNT)
-  {
-    go(baseSpeed, baseSpeed, finishDelay * 4);
-    go(0, 0);
-    while (true)
-    {
-    };
-  }
-}
 
-void obezdBanki()
-{
-  if (uzdF() < distanceToCheckBanka / 1.6)
-  {
-    go(0, 0, baseDelay);
-    go(-baseSpeed, baseSpeed, povorotDelay); // поворачиваем влево пока мы на линии с банкой
-    go(0, 0, baseDelay);
-    go(baseSpeed, baseSpeed, obezdDelay);       // едем вперед секунду чтобы уйти с линии где банка
-    go(baseSpeed, -baseSpeed, povorotDelay);    // поворачиваем вправа
-    go(baseSpeed, baseSpeed, obezdDelay * 1.5); // едем вперед чтобы обехать банку
-    go(baseSpeed, -baseSpeed, povorotDelay);    // поворачиваем вправо
-    while (IR_SENSOR_L_PIN > blackLimit)        // едем пока не вернемся на линию
-    {
-      go(baseSpeed, baseSpeed);
-    }
-  }
-}
-// перемещение банки на другую сторону перекрестка
-void perekrestok()
-{
-  crossCount++;
-  finish();
-  go(baseSpeed, baseSpeed, crossDelay);
-  go(0, 0, baseDelay);
-  right();
-
-  if (uzdF() < distanceToCheckBanka)
-  {
-    moveBankaTake();
-    moveBankaPut();
-    right(false);
-  }
-  else
-  {
-    right();
-    right();
-    if (uzdF() < distanceToCheckBanka)
-    {
-      moveBankaTake();
-      moveBankaPut();
-      left();
-    }
-    else
-    {
-      right();
-    }
-  }
-}
-
-void doezd()
-{
-  go(baseSpeed, baseSpeed, crossDelay);
-  go(0, 0, baseDelay / 2);
-}
 
 void MoveBanka90grad()
 {
@@ -223,8 +146,8 @@ void moveBankaNextCross()
 
 void loop()
 {
-
-  // test();
+  
+//   test();
 
   preg(baseSpeed);
 
@@ -310,5 +233,4 @@ void loop()
     }
   }
 
-  // obezdBanki();
 }
