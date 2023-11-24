@@ -16,7 +16,7 @@ void preg(int speed)
 
   float p_gain;
   int E;
-  speed == 0 ?: p_gain = KOEF_ERROR * gainCoeff, p_gain = KOEF_ERROR;
+  p_gain = (speed == 0) ? KOEF_ERROR * gainCoeff : KOEF_ERROR;
 
   // int d1 = analogRead(IR_SENSOR_L_PIN);
   // int d2 = analogRead(IR_SENSOR_R_PIN);
@@ -37,6 +37,25 @@ void preg(int speed)
   go(M1, M2,0,false);
 }
 
+void fixPositionAfterTurn()
+{
+  // Выравниваем робота после поворота пока ошибка(разность показаний левого и правого ИК датчика) не будет меньше maxErrorTurnFix
+  while (currentError() < maxErrorTurnFix)
+  {
+    preg(0);
+  }
+  // if (fixPosition) // Корректируем положение машины относительно черной линии
+  // {
+  //   go(0, 0, baseDelay / 3);                         // Ждем пока закончится импульс инерции при повороте
+  //   startTime = millis();                            // Считываем текущее время
+  //   while (millis() - startTime < timeToMoveBanka) // Пока текущее время - время старта таймера меньше интервала выравнивания едем по preg()
+  //   {
+  //     preg();
+  //   }
+  //   go(0, 0, baseDelay / 3);                           // Ждем пока закончится импульс инерции
+  //   go(-baseSpeed, -baseSpeed, timeToMoveBanka); // Едем назад,чтобы вернуться на перекресток
+  // }
+}
 
 void right()
 {
@@ -128,22 +147,4 @@ void doezd()
   go(0, 0, baseDelay / 2);
 }
 
-void fixPositionAfterTurn()
-{
-  // Выравниваем робота после поворота пока ошибка(разность показаний левого и правого ИК датчика) не будет меньше maxErrorTurnFix
-  while (currentError() < maxErrorTurnFix)
-  {
-    preg(0);
-  }
-  // if (fixPosition) // Корректируем положение машины относительно черной линии
-  // {
-  //   go(0, 0, baseDelay / 3);                         // Ждем пока закончится импульс инерции при повороте
-  //   startTime = millis();                            // Считываем текущее время
-  //   while (millis() - startTime < timeToMoveBanka) // Пока текущее время - время старта таймера меньше интервала выравнивания едем по preg()
-  //   {
-  //     preg();
-  //   }
-  //   go(0, 0, baseDelay / 3);                           // Ждем пока закончится импульс инерции
-  //   go(-baseSpeed, -baseSpeed, timeToMoveBanka); // Едем назад,чтобы вернуться на перекресток
-  // }
-}
+

@@ -47,8 +47,8 @@ float timeToMoveBanka = 1000;       // Время в течении которо
 int distanceToTakeBanka = 5;        // расстояние на котром надо взять банку
 int distanceToCheckBanka = 30;      // расстояние на котром ищем банку
 bool haveBanka = false;             // Флаг обнаружения банки -есть или нет банки на по направлению движения
-int gainCoeff = 300;                // Коэффициент усиления П регулятора при выравнивании после поворота
-int maxErrorTurnFix = 20;           // Макисмальная ошибка до которой идет выравнивание после поворота
+int gainCoeff = 30;                // Коэффициент усиления П регулятора при выравнивании после поворота
+int maxErrorTurnFix = 10;           // Макисмальная ошибка до которой идет выравнивание после поворота
 int obezdDelay = 1500;              // задержка при объезде банки
 int finishDelay = 2000;             // задержка при финишировании
 int povorotDelay = 1000;            // задержка при повороте на 90 градусов
@@ -156,81 +156,83 @@ void loop()
 
     crossCount++;
     doezd();
-    if (crossCount == 1) // на перекрестке 2
-    {
-      right();
-    }
+    test();
 
-    if (crossCount == 2) // на перекрестке 6
-    {
-      right();
-    }
+  //   if (crossCount == 1) // на перекрестке 2
+  //   {
+  //     right();
+  //   }
 
-    // if (crossCount == 3)
-    // {
-    //   go(baseSpeed, baseSpeed, crossDelay/1.5 ); // на перекрестке 7
-    //   go(0, 0, baseDelay);
-    // }
+  //   if (crossCount == 2) // на перекрестке 6
+  //   {
+  //     right();
+  //   }
 
-    // if (crossCount == 4) // на перекрестке 9
-    // {
-    //   go(baseSpeed, baseSpeed, crossDelay/1.5 );
-    //   go(0, 0, baseDelay);
-    // }
+  //   // if (crossCount == 3)
+  //   // {
+  //   //   go(baseSpeed, baseSpeed, crossDelay/1.5 ); // на перекрестке 7
+  //   //   go(0, 0, baseDelay);
+  //   // }
 
-    if (crossCount == 5) // на перекрестке 11
-    {
-      right();
-    }
+  //   // if (crossCount == 4) // на перекрестке 9
+  //   // {
+  //   //   go(baseSpeed, baseSpeed, crossDelay/1.5 );
+  //   //   go(0, 0, baseDelay);
+  //   // }
 
-    if (crossCount == 6) // на перекрестке 12
-    {
-      left();
-      left();
-      // pregSomeTime(2000);
-      // moveBankaNextCross();
-    }
+  //   if (crossCount == 5) // на перекрестке 11
+  //   {
+  //     right();
+  //   }
 
-    if (crossCount == 7) // на перекрестке 11
-    {
-      right();
-    }
+  //   if (crossCount == 6) // на перекрестке 12
+  //   {
+  //     left();
+  //     left();
+  //     // pregSomeTime(2000);
+  //     // moveBankaNextCross();
+  //   }
 
-    if (crossCount == 8) // на перекрестке 13
-    {
-      // moveBankaPut();
-      // go(-baseSpeed, -baseSpeed, crossDelay);
-      // openServo();
-      // right();
-      right();
-      right();
-    }
+  //   if (crossCount == 7) // на перекрестке 11
+  //   {
+  //     right();
+  //   }
 
-    if (crossCount == 9) // на перекрестке 11
-    {
-      right();
-    }
+  //   if (crossCount == 8) // на перекрестке 13
+  //   {
+  //     // moveBankaPut();
+  //     // go(-baseSpeed, -baseSpeed, crossDelay);
+  //     // openServo();
+  //     // right();
+  //     right();
+  //     right();
+  //   }
 
-    if (crossCount == 10) // на перекрестке 5
-    {
-      right();
-    }
+  //   if (crossCount == 9) // на перекрестке 11
+  //   {
+  //     right();
+  //   }
 
-    // if (crossCount == 11)
-    // {
-    //   go(baseSpeed, baseSpeed, crossDelay/1.5); // на перекрестке 3
-    //   go(0, 0, baseDelay);
-    // }
+  //   if (crossCount == 10) // на перекрестке 5
+  //   {
+  //     right();
+  //   }
 
-    if (crossCount == 12) // на перекрестке 4
-    {
-      MoveBanka90grad();
-    }
+  //   // if (crossCount == 11)
+  //   // {
+  //   //   go(baseSpeed, baseSpeed, crossDelay/1.5); // на перекрестке 3
+  //   //   go(0, 0, baseDelay);
+  //   // }
 
-    if (crossCount == 13) // на перекрестке 3
-    {
-      right();
-    }
-  }
+  //   if (crossCount == 12) // на перекрестке 4
+  //   {
+  //     MoveBanka90grad();
+  //   }
+
+  //   if (crossCount == 13) // на перекрестке 3
+  //   {
+  //     right();
+  //   }
+   }
 
 }

@@ -44,7 +44,7 @@ void testIsOnCross(){
 
 
 
-void testTurn(){
+void testFullTurn(){
     right();
     right();
     right();
@@ -61,9 +61,9 @@ void test()
 
      //testUZDF(); // тест переднего УЗ датчика
 
-       testServo(); //тест сервопривода
+    //   testServo(); //тест сервопривода
        //testIsOnBlack();
       // testIsOnCross();
-   // testTurn();
+    testFullTurn();
 }
 
