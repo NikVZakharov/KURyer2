@@ -12,7 +12,7 @@ void go(int L, int R, int interval = 0)
   delay(interval);
 }
 
-void right(bool fixPosition = true)
+void right()
 {
   go(baseSpeed, -baseSpeed, 500); // Поворачиваем так, чтобы левый ИК датчик сместился с белого на черную линию
   //  go(0, 0, baseDelay);

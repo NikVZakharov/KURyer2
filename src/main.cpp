@@ -30,6 +30,7 @@ const int MOTOR_R_SPEED_PIN = 5;
 const int SERVO_PIN = 13;
 const int FINISH_CROSS_COUNT = 4;
 const float KOEFF_FIX_MOTOR_R_SPEED = 1.45;
+const bool FIXPOSITION = true; // выравниваемся на повороте или нет
 
 int baseSpeed = 150; // базовая скорость
 int minIRL = 200, minIRR = 200, maxIRL = 800, maxIRR = 800;
@@ -50,7 +51,7 @@ int gainCoeff = 300;                // Коэффициент усиления �
 int maxErrorTurnFix = 20;           // Макисмальная ошибка до которой идет выравнивание после поворота
 int obezdDelay = 1500;              // задержка при объезде банки
 int finishDelay = 2000;             // задержка при финишировании
-int povorotDelay = 1000;
+int povorotDelay = 1000;            // задержка при повороте на 90 градусов
 
 void start()
 {
@@ -210,21 +211,14 @@ void MoveBanka90grad()
 
 void moveBankaNextCross()
 {
-
-  go(0, 0, baseDelay);
-  go(baseSpeed, -baseSpeed, povorotDelay / 1.6); // поворачиваем вправо пока мы на линии с банкой
-  go(0, 0, baseDelay);
-  while (uzdF() > distanceToTakeBanka)
+  go(baseSpeed,-baseSpeed,povorotDelay);
+  while (distanceToTakeBanka>10)
   {
-    go(baseSpeed, baseSpeed); // едем вперед доехать до банки
+    go(baseSpeed,baseSpeed);
   }
-  go(0, 0, baseDelay / 2);
-  closeServo();
-  go(-baseSpeed, baseSpeed, povorotDelay * 2); // поворачиваем влево чтобы повернуться к линии
-  while (IR_SENSOR_L_PIN > blackLimit)         // едем пока не вернемся на линию
-  {
-    go(baseSpeed, baseSpeed);
-  }
+  moveBankaTake();
+  doezd();
+  left();
 }
 
 void loop()
@@ -234,95 +228,87 @@ void loop()
 
   preg(baseSpeed);
 
-  // if (isOnCross())
-  // {
-    if (isOnCross())
+  if (isOnCross())
+  {
+
+    crossCount++;
+    doezd();
+    if (crossCount == 1) // на перекрестке 2
     {
-       crossCount++;
+      right();
     }
-    
-   //crossCount++;
-  //doezd();
-  //   if (crossCount == 1) // на перекрестке 2
-  //   {
-  //     right();
-  //   }
 
-  //   if (crossCount == 2) // на перекрестке 6
-  //   {
-  //     right();
-  //   }
-
-  //   // if (crossCount == 3)
-  //   // {
-  //   //   go(baseSpeed, baseSpeed, crossDelay/1.5 ); // на перекрестке 7
-  //   //   go(0, 0, baseDelay);
-  //   // }
-
-  //   // if (crossCount == 4) // на перекрестке 9
-  //   // {
-  //   //   go(baseSpeed, baseSpeed, crossDelay/1.5 );
-  //   //   go(0, 0, baseDelay);
-  //   // }
-
-  //   if (crossCount == 5) // на перекрестке 11
-  //   {
-  //     right();
-  //   }
-
-  if (crossCount == 1 /*6*/) // на перекрестке 12
-  {
-    doezd();
-    left();
-    doezd();
-    left();
-    
-    startTime = millis();                          // Считываем текущее время
-    while (millis() - startTime < timeToMoveBanka) // Пока текущее время - время старта таймера меньше интервала выравнивания едем по preg()
+    if (crossCount == 2) // на перекрестке 6
     {
-      preg(baseSpeed);
+      right();
     }
-    moveBankaNextCross();
+
+    // if (crossCount == 3)
+    // {
+    //   go(baseSpeed, baseSpeed, crossDelay/1.5 ); // на перекрестке 7
+    //   go(0, 0, baseDelay);
+    // }
+
+    // if (crossCount == 4) // на перекрестке 9
+    // {
+    //   go(baseSpeed, baseSpeed, crossDelay/1.5 );
+    //   go(0, 0, baseDelay);
+    // }
+
+    if (crossCount == 5) // на перекрестке 11
+    {
+      right();
+    }
+
+    if (crossCount == 6) // на перекрестке 12
+    {
+      left();
+      left();
+      // pregSomeTime(2000);
+      // moveBankaNextCross();
+    }
+
+    if (crossCount == 7) // на перекрестке 11
+    {
+      right();
+    }
+
+    if (crossCount == 8) // на перекрестке 13
+    {
+      // moveBankaPut();
+      // go(-baseSpeed, -baseSpeed, crossDelay);
+      // openServo();
+      // right();
+      right();
+      right();
+    }
+
+    if (crossCount == 9) // на перекрестке 11
+    {
+      right();
+    }
+
+    if (crossCount == 10) // на перекрестке 5
+    {
+      right();
+    }
+
+    // if (crossCount == 11)
+    // {
+    //   go(baseSpeed, baseSpeed, crossDelay/1.5); // на перекрестке 3
+    //   go(0, 0, baseDelay);
+    // }
+
+    if (crossCount == 12) // на перекрестке 4
+    {
+      MoveBanka90grad();
+    }
+
+    if (crossCount == 13) // на перекрестке 3
+    {
+      right();
+    }
   }
-
-  if (crossCount == 2) // на перекрестке 11
-  {
-    doezd();
-    right();
-
-  }
-
-  if (crossCount == 3 /*8*/) // на перекрестке 13
-  {
-    moveBankaPut();
-  }
-
-  //   if (crossCount == 9) // на перекрестке 11
-  //   {
-  //     right();
-  //   }
-
-  //   if (crossCount == 10) // на перекрестке 5
-  //   {
-  //     right();
-  //   }
-
-  //   // if (crossCount == 11)
-  //   // {
-  //   //   go(baseSpeed, baseSpeed, crossDelay/1.5); // на перекрестке 3
-  //   //   go(0, 0, baseDelay);
-  //   // }
-
-  //   if (crossCount == 12) // на перекрестке 4
-  //   {
-  //   MoveBanka90grad();
-  //   }
-
-  // if (crossCount == 13) // на перекрестке 3
-  // {
-  //   right();
-  // }
-  // }
 
   // obezdBanki();
 }

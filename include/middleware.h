@@ -8,4 +8,5 @@ bool isOnBlack(int sensor);
 bool checkBanka();
 int currentError();
 void fixPositionAfterTurn();
+void pregSomeTime(int timeToMove);
 #endif
