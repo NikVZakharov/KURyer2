@@ -31,7 +31,7 @@ const int SERVO_PIN = 13;
 const int FINISH_CROSS_COUNT = 4;
 const float KOEFF_FIX_MOTOR_R_SPEED = 1.2;
 const bool FIXPOSITION = true; // выравниваемся на повороте или нет
-const int MAX_MOTOR_SPEED=250;
+const int MAX_MOTOR_SPEED = 250;
 
 int baseSpeed = 150; // базовая скорость
 int minIRL = 200, minIRR = 200, maxIRL = 800, maxIRR = 800;
@@ -48,13 +48,11 @@ float timeToMoveBanka = 1000;       // Время в течении которо
 int distanceToTakeBanka = 5;        // расстояние на котром надо взять банку
 int distanceToCheckBanka = 30;      // расстояние на котром ищем банку
 bool haveBanka = false;             // Флаг обнаружения банки -есть или нет банки на по направлению движения
-int gainCoeff = 30;                // Коэффициент усиления П регулятора при выравнивании после поворота
+int gainCoeff = 30;                 // Коэффициент усиления П регулятора при выравнивании после поворота
 int maxErrorTurnFix = 10;           // Макисмальная ошибка до которой идет выравнивание после поворота
 int obezdDelay = 1500;              // задержка при объезде банки
 int finishDelay = 2000;             // задержка при финишировании
 int povorotDelay = 1000;            // задержка при повороте на 90 градусов
-
-
 
 void setup()
 {
@@ -93,8 +91,7 @@ void moveBankaTake()
   {
     go(-baseSpeed, -baseSpeed);
   }
-  go(baseSpeed, baseSpeed, crossDelay);
-  go(0, 0, baseDelay);
+  doezd();
 
   // while (!isOnCross()) // Едем вперед пока не доедем до перекрестка
   // {
@@ -111,17 +108,14 @@ void moveBankaPut()
   // }
   pregSomeTime(timeToMoveBanka);
 
-  //go(0, 0, baseDelay);
+  go(0, 0, baseDelay);
   openServo();
   while (!isOnCross())
   {
     go(-baseSpeed, -baseSpeed);
   }
-  go(baseSpeed, baseSpeed, baseDelay / 2);
-  go(0, 0, baseDelay);
+  doezd();
 }
-
-
 
 void MoveBanka90grad()
 {
@@ -135,10 +129,10 @@ void MoveBanka90grad()
 
 void moveBankaNextCross()
 {
-  go(baseSpeed,-baseSpeed,povorotDelay);
-  while (distanceToTakeBanka>10)
+  go(baseSpeed, -baseSpeed, povorotDelay);
+  while (distanceToTakeBanka > 10)
   {
-    go(baseSpeed,baseSpeed);
+    go(baseSpeed, baseSpeed);
   }
   moveBankaTake();
   doezd();
@@ -147,8 +141,8 @@ void moveBankaNextCross()
 
 void loop()
 {
-  
-//   test();
+
+  //   test();
 
   preg(baseSpeed);
 
@@ -157,7 +151,7 @@ void loop()
 
     crossCount++;
     doezd();
- 
+
     if (crossCount == 1) // на перекрестке 2
     {
       right();
@@ -174,29 +168,28 @@ void loop()
     //   go(0, 0, baseDelay);
     // }
 
-    // if (crossCount == 4) // на перекрестке 9
-    // {
-    //   go(baseSpeed, baseSpeed, crossDelay/1.5 );
-    //   go(0, 0, baseDelay);
-    // }
-
-    if (crossCount == 5) // на перекрестке 11
+    if (crossCount == 4) // на перекрестке 9
     {
       right();
     }
 
-    if (crossCount == 6) // на перекрестке 12
+    if (crossCount == 5) // на перекрестке 10
     {
-      left();
-      left();
+      right();
+      right();
+    }
+
+    if (crossCount == 6) // на перекрестке 9
+    {
+      right();
       // pregSomeTime(2000);
       // moveBankaNextCross();
     }
 
-    if (crossCount == 7) // на перекрестке 11
-    {
-      right();
-    }
+    // if (crossCount == 7) // на перекрестке 11
+    // {
+    //   doezd();
+    // }
 
     if (crossCount == 8) // на перекрестке 13
     {
@@ -226,13 +219,13 @@ void loop()
 
     if (crossCount == 12) // на перекрестке 4
     {
-      MoveBanka90grad();
+      //MoveBanka90grad();
+      left();
     }
 
     if (crossCount == 13) // на перекрестке 3
     {
-      right();
+     // doezd();
     }
-   }
-
+  }
 }
