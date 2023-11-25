@@ -9,11 +9,16 @@ void go(int L, int R, int interval = 0, bool fixMotor = true)
   digitalWrite(MOTOR_R_DIRECTION_PIN, R > 0 ? HIGH : LOW);                         // Управляем направлением правого мотора
   analogWrite(MOTOR_R_SPEED_PIN, abs(R)); // Управляем скоростью правого мотора
 
+  // Serial.print("fixMotor: "); Serial.println(fixMotor);
+  // Serial.print("L: "); Serial.print(abs(fixMotor ? L * KOEFF_FIX_MOTOR_L_SPEED :L)); Serial.print(" R: "); Serial.println(abs(R));
+  // delay(2000);
+
   delay(interval);
+
 }
 void preg(int speed)
 {
-  int p_gain = (speed == 0) ? KOEF_ERROR * gainCoeff : KOEF_ERROR;
+  float p_gain = (speed == 0) ? KOEF_ERROR * gainCoeff : KOEF_ERROR;
 
   int E = currentError();
 
@@ -21,6 +26,11 @@ void preg(int speed)
   M1 = constrain(M1, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
   int M2 = speed - E * p_gain;
   M2 = constrain(M2, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
+
+  // Отладочное сообщение (можно закомментировать при финальной сборке)
+  // Serial.print("p_gain: "); Serial.print(p_gain); Serial.print(" E: "); Serial.println(E);
+  // Serial.print("M1: "); Serial.print(M1); Serial.print(" M2: "); Serial.println(M2);
+  
   go(M1, M2,0,false);
 
 }
