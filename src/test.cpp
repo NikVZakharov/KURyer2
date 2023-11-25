@@ -31,8 +31,8 @@ void testIsOnBlack(){
 void testIRSensors(){
     Serial.print(analogRead(IR_SENSOR_L_PIN));
     Serial.print(" ");
-    Serial.print(analogRead(IR_SENSOR_M_PIN));
-    Serial.print(" ");
+    // Serial.print(analogRead(IR_SENSOR_M_PIN));
+    // Serial.print(" ");
     Serial.println(analogRead(IR_SENSOR_R_PIN));
     delay(baseDelay);
 }
@@ -57,13 +57,13 @@ void test()
 //testIRSensors();
     // go(baseSpeed, baseSpeed); //тест моторов
 
-    //preg(baseSpeed);
+    preg(baseSpeed);
 
      //testUZDF(); // тест переднего УЗ датчика
 
     //   testServo(); //тест сервопривода
        //testIsOnBlack();
       // testIsOnCross();
-    testFullTurn();
+   // testFullTurn();
 }
 

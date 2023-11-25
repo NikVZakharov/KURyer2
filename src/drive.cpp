@@ -2,12 +2,12 @@
 #include <header.h>
 #include <middleware.h>
 
-void go(int L, int R, int interval = 0,bool fixMotor=true)
+void go(int L, int R, int interval = 0, bool fixMotor = true)
 {
-  digitalWrite(MOTOR_L_DIRECTION_PIN, L > 0 ? HIGH : LOW); // Управляем направлением левого мотора
-  analogWrite(MOTOR_L_SPEED_PIN, abs(L));                  // Управляем скоростью левого мотора
-  digitalWrite(MOTOR_R_DIRECTION_PIN, R > 0 ? HIGH : LOW); // Управляем направлением правого мотора
-  analogWrite(MOTOR_R_SPEED_PIN, abs(fixMotor?R*KOEFF_FIX_MOTOR_R_SPEED:R));                  // Управляем скоростью правого мотора
+  digitalWrite(MOTOR_L_DIRECTION_PIN, L > 0 ? HIGH : LOW);                         // Управляем направлением левого мотора
+  analogWrite(MOTOR_L_SPEED_PIN, abs(fixMotor ? L * KOEFF_FIX_MOTOR_L_SPEED :L));                                          // Управляем скоростью левого мотора
+  digitalWrite(MOTOR_R_DIRECTION_PIN, R > 0 ? HIGH : LOW);                         // Управляем направлением правого мотора
+  analogWrite(MOTOR_R_SPEED_PIN, abs(R)); // Управляем скоростью правого мотора
 
   delay(interval);
 }
@@ -22,6 +22,7 @@ void preg(int speed)
   int M2 = speed - E * p_gain;
   M2 = constrain(M2, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
   go(M1, M2,0,false);
+
 }
 
 void fixPositionAfterTurn()
@@ -68,6 +69,7 @@ void right()
   fixPositionAfterTurn();
 
   go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
+  
 }
 
 void left()
@@ -103,7 +105,7 @@ void pregSomeTime(unsigned long timeToMove)
   {
     preg(baseSpeed);
   }
-  go(0,0,baseDelay);
+  go(0, 0, baseDelay);
 }
 
 void start()
@@ -121,7 +123,7 @@ void finish()
 {
   if (crossCount == FINISH_CROSS_COUNT)
   {
-    go(baseSpeed, baseSpeed, finishDelay * 4);
+    go(baseSpeed, baseSpeed, finishDelay);
     go(0, 0);
     while (true)
     {
@@ -133,5 +135,3 @@ void doezd()
   go(baseSpeed, baseSpeed, crossDelay);
   go(0, 0, baseDelay / 2);
 }
-
-
