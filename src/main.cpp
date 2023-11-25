@@ -144,98 +144,93 @@ void moveBankaNextCross()
 void loop()
 {
 
-     test();
+   //  test();
 
-  // preg(baseSpeed);
+  preg(baseSpeed);
 
-  // if (isOnCross())
-  // {
+  if (isOnCross())
+  {
 
-  //   crossCount++;
-  //   doezd();
+    crossCount++;
+    doezd();
 
-  //   if (crossCount == 1) // на перекрестке 2
-  //   {
-  //     right();
+    if (crossCount == 1) // на перекрестке 2
+    {
+      right();
       
-  //   }
+    }
 
-  //   if (crossCount == 2) // на перекрестке 6
-  //   {
-  //     right();
+    if (crossCount == 2) // на перекрестке 6
+    {
+      right();
       
-  //   }
+    }
 
-  //   // if (crossCount == 3)
-  //   // {
-  //   //   go(baseSpeed, baseSpeed, crossDelay/1.5 ); // на перекрестке 7
-  //   //   go(0, 0, baseDelay);
-  //   // }
+    // if (crossCount == 3)
+    // {
+    //   go(baseSpeed, baseSpeed, crossDelay/1.5 ); // на перекрестке 7
+    //   go(0, 0, baseDelay);
+    // }
 
-  //   if (crossCount == 4) // на перекрестке 9
-  //   {
-  //     right();
-  //     pregSomeTime(2000);
-  //   }
+    if (crossCount == 4) // на перекрестке 9
+    {
+      right();
+      pregSomeTime(2000);
+    }
 
-  //   if (crossCount == 5) // на перекрестке 10
-  //   {
-  //     left();
-  //     left();
-  //   }
+    if (crossCount == 5) // на перекрестке 10
+    {
+      left();
+      left();
+    }
 
-  //   if (crossCount == 6) // на перекрестке 9
-  //   {
-  //     right();
-  //     // pregSomeTime(2000);
-  //     // moveBankaNextCross();
-  //   }
+    if (crossCount == 6) // на перекрестке 9
+    {
+      right();
+      // pregSomeTime(2000);
+      // moveBankaNextCross();
+    }
 
-  //   // if (crossCount == 7) // на перекрестке 11
-  //   // {
-  //   //   doezd();
-  //   // }
+    // if (crossCount == 7) // на перекрестке 11
+    // {
+    //   doezd();
+    // }
 
-  //   if (crossCount == 8) // на перекрестке 13
-  //   {
-  //     // moveBankaPut();
-  //     // go(-baseSpeed, -baseSpeed, crossDelay);
-  //     // openServo();
-  //     // right();
-  //     right();
-  //     delay(baseDelay);
-  //     right();
-  //   }
+    if (crossCount == 8) // на перекрестке 13
+    {
+      // moveBankaPut();
+      // go(-baseSpeed, -baseSpeed, crossDelay);
+      // openServo();
+      // right();
+      right();
+      delay(baseDelay);
+      right();
+    }
 
-  //   if (crossCount == 9) // на перекрестке 11
-  //   {
-  //     right();
-  //   }
+    if (crossCount == 9) // на перекрестке 11
+    {
+      right();
+    }
 
-  //   if (crossCount == 10) // на перекрестке 5
-  //   {
-  //     right();
-  //   }
+    if (crossCount == 10) // на перекрестке 5
+    {
+      right();
+    }
 
-  //   if (crossCount == 11)
-  //   {
-  //     right();
-  //   }
+    if (crossCount == 11)
+    {
+      right();
+    }
 
-  //   if (crossCount == 12) // на перекрестке 4
-  //   {
-  //     MoveBanka90grad();
+    if (crossCount == 12) // на перекрестке 4
+    {
+      MoveBanka90grad();
       
-  //   }
+    }
 
-  //   if (crossCount == 16) // на перекрестке 3
-  //   {
-  //     finish();
-  //     go(0,0);
-  //     while (1)
-  //     { 
-  //     };
-      
-  //   }
-  // }
+    if (crossCount == 16) // на перекрестке 3
+    {
+      finish();   
+    }
+  }
 }
