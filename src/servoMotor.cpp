@@ -6,7 +6,7 @@
 Servo servo;
 
 void initServo(){
-      servo.attach(SERVO_PIN);
+  servo.attach(SERVO_PIN);
   servo.write(servoOpenPosition);
 }
 

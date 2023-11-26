@@ -28,31 +28,31 @@ const int MOTOR_L_SPEED_PIN = 3;
 const int MOTOR_R_DIRECTION_PIN = 4;
 const int MOTOR_R_SPEED_PIN = 5;
 const int SERVO_PIN = 13;
-const int FINISH_CROSS_COUNT = 13;
+const int FINISH_CROSS_COUNT = 12;
 const float KOEFF_FIX_MOTOR_L_SPEED = 0.8;
 const bool FIXPOSITION = true; // выравниваемся на повороте или нет
 const int MAX_MOTOR_SPEED = 250;
 
 int baseSpeed = 200; // базовая скорость
 int minIRL = 200, minIRR = 200, maxIRL = 800, maxIRR = 800;
-float KOEF_ERROR = 0.4;             // уменьшаем или увеличиваем ошибку чтобы не колбасило робота
-int servoOpenPosition = 60;         // градус открытого серво
-int servoClosePosition = 130;       // градус закытого серво
-int baseDelay = 1000;               // задержка между действиями
-int crossCount = 0;                 // количество перекрестков
-int crossDelay = 500;               // то сколько проедет робот после того как датчики увидят перекресток
-int timeToMoveBackWithBanka = 1000; // время, которое робот едет назад с банкой
-int blackLimit = 500;               // все что ниже-черная линия
-unsigned long startTime = 0;        // Время начала таймера
-float timeToMoveBanka = 1000;       // Время в течении которого выравниваем машину после поворота
-int distanceToTakeBanka = 5;        // расстояние на котром надо взять банку
-int distanceToCheckBanka = 30;      // расстояние на котром ищем банку
-bool haveBanka = false;             // Флаг обнаружения банки -есть или нет банки на по направлению движения
-int gainCoeff = 30;                 // Коэффициент усиления П регулятора при выравнивании после поворота
-int maxErrorTurnFix = 10;           // Макисмальная ошибка до которой идет выравнивание после поворота
-int obezdDelay = 1500;              // задержка при объезде банки
-int finishDelay = 2000;             // задержка при финишировании
-int povorotDelay = 1000;            // задержка при повороте на 90 градусов
+float KOEF_ERROR = 0.4;              // уменьшаем или увеличиваем ошибку чтобы не колбасило робота
+int servoOpenPosition = 60;          // градус открытого серво
+int servoClosePosition = 130;        // градус закытого серво
+int baseDelay = 1000;                // задержка между действиями
+int crossCount = 0;                  // количество перекрестков
+int crossDelay = 500;                // то сколько проедет робот после того как датчики увидят перекресток
+int timeToMoveBackWithBanka = 1000;  // время, которое робот едет назад с банкой
+int blackLimit = 500;                // все что ниже-черная линия
+unsigned long startTime = 0;         // Время начала таймера
+unsigned long timeToMoveBanka = 900; // Время в течении которого выравниваем машину после поворота
+int distanceToTakeBanka = 5;         // расстояние на котром надо взять банку
+int distanceToCheckBanka = 30;       // расстояние на котром ищем банку
+bool haveBanka = false;              // Флаг обнаружения банки -есть или нет банки на по направлению движения
+int gainCoeff = 50;                  // Коэффициент усиления П регулятора при выравнивании после поворота
+int maxErrorTurnFix = 10;            // Макисмальная ошибка до которой идет выравнивание после поворота
+int obezdDelay = 1500;               // задержка при объезде банки
+int finishDelay = 2000;              // задержка при финишировании
+int povorotDelay = 1000;             // задержка при повороте на 90 градусов
 
 void setup()
 {
@@ -119,14 +119,13 @@ void moveBankaPut()
 
 void MoveBanka90grad()
 {
-  
+
   moveBankaTake();
   right();
   right();
   right();
   moveBankaPut();
   left();
-  
 }
 
 void moveBankaNextCross()
@@ -144,7 +143,7 @@ void moveBankaNextCross()
 void loop()
 {
 
-   //  test();
+  // test();
 
   preg(baseSpeed);
 
@@ -153,84 +152,64 @@ void loop()
 
     crossCount++;
     doezd();
-
-    if (crossCount == 1) // на перекрестке 2
+    finish();
+    if (crossCount == 4)
     {
+      moveBankaTake();
       right();
-      
     }
-
-    if (crossCount == 2) // на перекрестке 6
-    {
-      right();
-      
-    }
-
-    // if (crossCount == 3)
-    // {
-    //   go(baseSpeed, baseSpeed, crossDelay/1.5 ); // на перекрестке 7
-    //   go(0, 0, baseDelay);
-    // }
-
-    if (crossCount == 4) // на перекрестке 9
-    {
-      right();
-      pregSomeTime(2000);
-    }
-
-    if (crossCount == 5) // на перекрестке 10
+    if (crossCount == 5)
     {
       left();
-      left();
+      moveBankaPut();
+     // pregSomeTime(200);
+      right();
     }
-
-    if (crossCount == 6) // на перекрестке 9
+    if (crossCount == 6)
     {
       right();
-      // pregSomeTime(2000);
-      // moveBankaNextCross();
     }
-
-    // if (crossCount == 7) // на перекрестке 11
+    // if (crossCount==7)
     // {
-    //   doezd();
+    //   moveBankaTake();
+    //   right();
     // }
-
-    if (crossCount == 8) // на перекрестке 13
-    {
-      // moveBankaPut();
-      // go(-baseSpeed, -baseSpeed, crossDelay);
-      // openServo();
-      // right();
-      right();
-      delay(baseDelay);
-      right();
-    }
-
-    if (crossCount == 9) // на перекрестке 11
+    if (crossCount == 9)
     {
       right();
     }
-
-    if (crossCount == 10) // на перекрестке 5
-    {
-      right();
-    }
-
+    // if (crossCount==10)
+    // {
+    //   right();
+    // }
     if (crossCount == 11)
     {
-      right();
+      left();
     }
-
-    if (crossCount == 12) // на перекрестке 4
-    {
-      MoveBanka90grad();
-      
-    }
-
-    if (crossCount == 16) // на перекрестке 3
-    {
-      finish();   
-    }
+    // if (crossCount==12)
+    // {
+    //   moveBankaPut();
+    //   left();
+    // }
+    // if (crossCount==13)
+    // {
+    //   left();
+    // }
+    // if (crossCount==15)
+    // {
+    //   left();
+    // }
+    // if (crossCount==7)
+    // {
+    //   right();
+    // }
+    // if (crossCount==10)
+    // {
+    //   right();
+    // }
+    // if (crossCount==12)
+    // {
+    //   left();
+    // }
   }
 }

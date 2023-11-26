@@ -38,10 +38,10 @@ void preg(int speed)
 void fixPositionAfterTurn()
 {
   // Выравниваем робота после поворота пока ошибка(разность показаний левого и правого ИК датчика) не будет меньше maxErrorTurnFix
-  while (currentError() < maxErrorTurnFix)
-  {
-    preg(0);
-  }
+  // while (currentError() < maxErrorTurnFix)
+  // {
+  //   preg(0);
+  // }
   // if (fixPosition) // Корректируем положение машины относительно черной линии
   // {
   //   go(0, 0, baseDelay / 3);                         // Ждем пока закончится импульс инерции при повороте
