@@ -30,16 +30,15 @@ void obezdBanki()
 // перемещение банки на другую сторону перекрестка
 void perekrestok()
 {
-  crossCount++;
-  finish();
-  go(baseSpeed, baseSpeed, crossDelay);
-  go(0, 0, baseDelay);
+  // crossCount++;
+  // finish();
+  // doezd();
   right();
 
   if (uzdF() < distanceToCheckBanka)
   {
   //  moveBankaTake();
-   // moveBankaPut();
+  // moveBankaPut();
     right();
   }
   else

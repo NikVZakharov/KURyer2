@@ -28,7 +28,7 @@ const int MOTOR_L_SPEED_PIN = 3;
 const int MOTOR_R_DIRECTION_PIN = 4;
 const int MOTOR_R_SPEED_PIN = 5;
 const int SERVO_PIN = 13;
-const int FINISH_CROSS_COUNT = 12;
+const int FINISH_CROSS_COUNT = 11;
 const float KOEFF_FIX_MOTOR_L_SPEED = 0.8;
 const bool FIXPOSITION = true; // выравниваемся на повороте или нет
 const int MAX_MOTOR_SPEED = 250;
@@ -42,7 +42,7 @@ int baseDelay = 1000;                // задержка между действ
 int crossCount = 0;                  // количество перекрестков
 int crossDelay = 500;                // то сколько проедет робот после того как датчики увидят перекресток
 int timeToMoveBackWithBanka = 1000;  // время, которое робот едет назад с банкой
-int blackLimit = 500;                // все что ниже-черная линия
+int blackLimit = 400;                // все что ниже-черная линия
 unsigned long startTime = 0;         // Время начала таймера
 unsigned long timeToMoveBanka = 900; // Время в течении которого выравниваем машину после поворота
 int distanceToTakeBanka = 5;         // расстояние на котром надо взять банку
@@ -142,74 +142,33 @@ void moveBankaNextCross()
 
 void loop()
 {
-
-  // test();
-
   preg(baseSpeed);
-
+  // test();
   if (isOnCross())
   {
-
     crossCount++;
     doezd();
+   if (crossCount==1)
+   {
+    right();
+   }
+   if (crossCount==6)
+   {
+    left();
+    while (!isOnCross())
+    {
+      preg(baseSpeed);
+    }
+    left();
+    left();
+   }
+    if (crossCount==10)
+   {
+    right();
+   }
+   if (crossCount==11)
+   {
     finish();
-    if (crossCount == 4)
-    {
-      moveBankaTake();
-      right();
-    }
-    if (crossCount == 5)
-    {
-      left();
-      moveBankaPut();
-     // pregSomeTime(200);
-      right();
-    }
-    if (crossCount == 6)
-    {
-      right();
-    }
-    // if (crossCount==7)
-    // {
-    //   moveBankaTake();
-    //   right();
-    // }
-    if (crossCount == 9)
-    {
-      right();
-    }
-    // if (crossCount==10)
-    // {
-    //   right();
-    // }
-    if (crossCount == 11)
-    {
-      left();
-    }
-    // if (crossCount==12)
-    // {
-    //   moveBankaPut();
-    //   left();
-    // }
-    // if (crossCount==13)
-    // {
-    //   left();
-    // }
-    // if (crossCount==15)
-    // {
-    //   left();
-    // }
-    // if (crossCount==7)
-    // {
-    //   right();
-    // }
-    // if (crossCount==10)
-    // {
-    //   right();
-    // }
-    // if (crossCount==12)
-    // {
-    //   left();
-    // }
+   }
   }
 }

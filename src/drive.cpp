@@ -37,11 +37,11 @@ void preg(int speed)
 
 void fixPositionAfterTurn()
 {
-  // Выравниваем робота после поворота пока ошибка(разность показаний левого и правого ИК датчика) не будет меньше maxErrorTurnFix
-  // while (currentError() < maxErrorTurnFix)
-  // {
-  //   preg(0);
-  // }
+ // Выравниваем робота после поворота пока ошибка(разность показаний левого и правого ИК датчика) не будет меньше maxErrorTurnFix
+  while (currentError() < maxErrorTurnFix)
+  {
+    preg(0);
+  }
   // if (fixPosition) // Корректируем положение машины относительно черной линии
   // {
   //   go(0, 0, baseDelay / 3);                         // Ждем пока закончится импульс инерции при повороте
@@ -111,7 +111,7 @@ void left()
 void pregSomeTime(unsigned long timeToMove)
 {
   startTime = millis();                     // Считываем текущее время
-  while (millis() - startTime < timeToMove) // Пока текущее время - время старта таймера меньше интервала выравнивания едем по preg()
+  while (millis() - startTime < timeToMove) // Пока текущее время - время старта таймера меньше заданного интервала едем по preg()
   {
     preg(baseSpeed);
   }
@@ -125,7 +125,7 @@ void start()
   {
     go(baseSpeed, baseSpeed);
   }
-  go(baseSpeed, baseSpeed, 300); // проезжаем поперечную черную линию пока черная линия трассы не окажется между датчиками
+  go(baseSpeed, baseSpeed, crossDelay); // проезжаем поперечную черную линию пока черная линия трассы не окажется между датчиками
   go(0, 0);
 }
 
@@ -137,7 +137,7 @@ void finish()
     go(0, 0);
     while (true)
     {
-    };
+    }
   }
 }
 void doezd()
