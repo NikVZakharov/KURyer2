@@ -14,6 +14,8 @@
 #include <UZD.h>
 #include <header.h>
 #include <servoMotor.h>
+#include <banka.h>
+
 #include <log.h>
 #include <test.h>
 
@@ -78,106 +80,48 @@ void setup()
   start();
 }
 
-void moveBankaTake()
-{
-  while (uzdF() > distanceToTakeBanka) // едем вперед на preg() пока расстояние до банки не будет меньше  distanceToTakeBanka
-  {
-    preg(baseSpeed);
-    // go(baseSpeed, baseSpeed);
-  }
-  go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
-  closeServo();        // закрываем сервопривод
-  while (!isOnCross())
-  {
-    go(-baseSpeed, -baseSpeed);
-  }
-  doezd();
-
-  // while (!isOnCross()) // Едем вперед пока не доедем до перекрестка
-  // {
-  //   preg(baseSpeed);
-  // }
-  // go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
-}
-
-void moveBankaPut()
-{
-  // while (isOnBlack(IR_SENSOR_M_PIN))
-  // {
-  //   preg(baseSpeed);
-  // }
-  pregSomeTime(timeToMoveBanka);
-
-  go(0, 0, baseDelay);
-  openServo();
-  while (!isOnCross())
-  {
-    go(-baseSpeed, -baseSpeed);
-  }
-  doezd();
-}
-
-void MoveBanka90grad()
-{
-
-  moveBankaTake();
-  right();
-  right();
-  right();
-  moveBankaPut();
-  left();
-}
-
-void moveBankaNextCross()
-{
-  go(baseSpeed, -baseSpeed, povorotDelay);
-  while (distanceToTakeBanka > 10)
-  {
-    go(baseSpeed, baseSpeed);
-  }
-  moveBankaTake();
-  doezd();
-  left();
-}
-
 void loop()
 {
-  preg(baseSpeed);
+
+  preg(baseSpeed);//едем по preg с базовой скоростью
+
   // test();
+
+  obezdObject();//проверяем нужно ли нам объехать банку
   if (isOnCross())
   {
+
     crossCount++;
-    doezd();
-   if (crossCount==1)
-   {
-    right();
-   }
-   if (crossCount==6)
-   {
-    left();
-    while (!isOnCross())
-    {
-      preg(baseSpeed);
-    }
-    left();
-    left();
-   }
-    if (crossCount==9)
-   {
-    left();
-    moveBankaTake();
-    right();
-    right();
-    moveBankaPut();
-    left();
-   }
-    if (crossCount==12)
-   {
-    right();
-   }
-   if (crossCount==13)
-   {
     finish();
-   }
+    doezd();
+
+    if (crossCount == 1)
+    {
+      right();
+    }
+    if (crossCount == 6)
+    {
+      left();
+      while (!isOnCross())
+      {
+        preg(baseSpeed);
+      }
+      left();
+      left();
+    }
+
+    if (crossCount == 9)
+    {
+      left();
+      moveToTakeObjectOnBlack();
+      right();
+      right();
+      moveToPutObjectOnBlack();
+      left();
+    }
+    if (crossCount == 12)
+    {
+      right();
+    }
   }
 }

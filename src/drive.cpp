@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <header.h>
 #include <middleware.h>
+#include <uzd.h>
 
 void go(int L, int R, int interval = 0, bool fixMotor = true)
 {
@@ -144,4 +145,74 @@ void doezd()
 {
   go(baseSpeed, baseSpeed, crossDelay);
   go(0, 0, baseDelay / 2);
+}
+
+void driveToObjectOnBlack(){
+    while (uzdF() > distanceToTakeBanka) // едем вперед на preg() пока расстояние до банки не будет меньше  distanceToTakeBanka
+  {
+    preg(baseSpeed);
+    // go(baseSpeed, baseSpeed);
+  }
+}
+
+
+//едем назад пока не увидим черную линию
+void driveBackToCross(){
+while (!isOnCross())
+  {
+    go(-baseSpeed, -baseSpeed);
+  }
+}
+
+void rightWith()
+{
+  go(baseSpeed, -baseSpeed, 500); // Поворачиваем так, чтобы левый ИК датчик сместился с белого на черную линию
+  //  go(0, 0, baseDelay);
+  while (isOnBlack(IR_SENSOR_M_PIN)) // Поворачиваем пока левый ИК датчик на черной линии
+  {
+    go(baseSpeed, -baseSpeed);
+  }
+  // go(0, 0, baseDelay/3);
+  go(baseSpeed, -baseSpeed, 300); // Поворачиваем так, чтобы левый ИК датчик сместился с черной линии на белое поле
+  //  go(0, 0, baseDelay);
+  while (!isOnBlack(IR_SENSOR_M_PIN)) // Поворачиваем пока левый ИК датчик на белом поле
+  {
+    go(baseSpeed, -baseSpeed);
+    // if (checkBanka()) // Если увидели банку останавливаем поворот
+    // {
+    //   go(0, 0, baseDelay);
+    //   return; //Выход из функции
+    // }
+  }
+
+  fixPositionAfterTurn();
+
+  go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
+  
+}
+
+void leftWith()
+{
+  go(-baseSpeed, baseSpeed, 500); // Поворачиваем так, чтобы правый ИК датчик сместился с белого на черную линию
+  //  go(0, 0, baseDelay);
+  while (isOnBlack(IR_SENSOR_M_PIN)) // Поворачиваем пока правый ИК датчик на черной линии
+  {
+    go(-baseSpeed, baseSpeed);
+  }
+  // go(0, 0, baseDelay/3);
+  go(-baseSpeed, baseSpeed, 300); // Поворачиваем так, чтобы правый ИК датчик сместился с черной линии на белое поле
+  //  go(0, 0, baseDelay);
+  while (!isOnBlack(IR_SENSOR_M_PIN)) // Поворачиваем пока правый ИК датчик на белом поле
+  {
+    go(-baseSpeed, baseSpeed);
+    // if (checkBanka()) // Если увидели банку останавливаем поворот
+    // {
+    //   go(0, 0, baseDelay);
+    //   return; //Выход из функции
+    // }
+  }
+
+  fixPositionAfterTurn();
+
+  go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
 }

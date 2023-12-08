@@ -42,6 +42,7 @@ bool isOnBlack(int sensor)
   return result;
 }
 
+//находятся ли датчики на черной линии
 bool isOnCross()
 {
   bool result = false;
