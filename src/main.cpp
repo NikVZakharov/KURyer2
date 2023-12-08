@@ -28,7 +28,7 @@ const int MOTOR_L_SPEED_PIN = 3;
 const int MOTOR_R_DIRECTION_PIN = 4;
 const int MOTOR_R_SPEED_PIN = 5;
 const int SERVO_PIN = 13;
-const int FINISH_CROSS_COUNT = 11;
+const int FINISH_CROSS_COUNT = 13;
 const float KOEFF_FIX_MOTOR_L_SPEED = 0.8;
 const bool FIXPOSITION = true; // выравниваемся на повороте или нет
 const int MAX_MOTOR_SPEED = 250;
@@ -162,11 +162,20 @@ void loop()
     left();
     left();
    }
-    if (crossCount==10)
+    if (crossCount==9)
+   {
+    left();
+    moveBankaTake();
+    right();
+    right();
+    moveBankaPut();
+    left();
+   }
+    if (crossCount==12)
    {
     right();
    }
-   if (crossCount==11)
+   if (crossCount==13)
    {
     finish();
    }
