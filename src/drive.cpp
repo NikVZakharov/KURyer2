@@ -77,7 +77,7 @@ void right()
     // }
   }
 
-  fixPositionAfterTurn();
+ // fixPositionAfterTurn();
 
   go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
   
@@ -104,7 +104,7 @@ void left()
     // }
   }
 
-  fixPositionAfterTurn();
+ // fixPositionAfterTurn();
 
   go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
 }

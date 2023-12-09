@@ -10,34 +10,33 @@
 #include <test.h>
 
 
+// // перемещение банки на другую сторону перекрестка
+// void perekrestok()
+// {
+//   // crossCount++;
+//   // finish();
+//   // doezd();
+//   right();
 
-// перемещение банки на другую сторону перекрестка
-void perekrestok()
-{
-  // crossCount++;
-  // finish();
-  // doezd();
-  right();
-
-  if (uzdF() < distanceToCheckBanka)
-  {
-  //  moveBankaTake();
-  // moveBankaPut();
-    right();
-  }
-  else
-  {
-    right();
-    right();
-    if (uzdF() < distanceToCheckBanka)
-    {
-   //   moveBankaTake();
-   //   moveBankaPut();
-      left();
-    }
-    else
-    {
-      right();
-    }
-  }
-}
+//   if (uzdF() < distanceToCheckBanka)
+//   {
+//   //  moveBankaTake();
+//   // moveBankaPut();
+//     right();
+//   }
+//   else
+//   {
+//     right();
+//     right();
+//     if (uzdF() < distanceToCheckBanka)
+//     {
+//    //   moveBankaTake();
+//    //   moveBankaPut();
+//       left();
+//     }
+//     else
+//     {
+//       right();
+//     }
+//   }
+// }

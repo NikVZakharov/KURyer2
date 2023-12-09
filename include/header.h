@@ -36,5 +36,7 @@ extern int maxErrorTurnFix;
 extern int obezdDelay;
 extern int finishDelay;
 extern int povorotDelay;
+extern int obezdObjectDelay;
+extern int distanceToCheckObject;
 
 #endif
