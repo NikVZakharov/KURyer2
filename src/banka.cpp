@@ -71,7 +71,7 @@ void obezdObject()
     go(0, 0, baseDelay);
     go(baseSpeed, baseSpeed, obezdDelay * 2);      // едем вперед секунду чтобы уйти с линии где банка
     go(-baseSpeed, baseSpeed, povorotDelay);       // поворачиваем вправа
-    go(baseSpeed, baseSpeed, obezdObjectDelay);    // едем вперед чтобы обехать банку
+    go(baseSpeed, baseSpeed, obezdObjectDelay*1.5);    // едем вперед чтобы обехать банку
     go(-baseSpeed, baseSpeed, povorotDelay / 1.5); // поворачиваем вправо
     while (IR_SENSOR_R_PIN > blackLimit)           // едем пока не вернемся на линию
     {

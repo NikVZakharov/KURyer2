@@ -16,7 +16,6 @@
 #include <servoMotor.h>
 #include <banka.h>
 
-
 #include <log.h>
 #include <test.h>
 
@@ -88,20 +87,9 @@ void loop()
 
   preg(baseSpeed); // едем по preg с базовой скоростью
 
-   //test();
+  // test();
 
-   obezdObject(); // проверяем нужно ли нам объехать банку
-
-  // если мы попали на резкий поворот то мы проверяем находятся ли правый и центральный датчик на черном и поворачиваем
-  /*if (IR_SENSOR_R_PIN < blackLimit && IR_SENSOR_M_PIN < blackLimit && IR_SENSOR_L_PIN > blackLimit)
-  {
-    Serial.print("hello");
-    go(0, 0, 500);
-    rightWith();
-    Serial.println("end");
-    
-  }*/
-  
+  obezdObject(); // проверяем нужно ли нам объехать банку
 
   if (isOnCross())
   {
@@ -109,7 +97,6 @@ void loop()
     crossCount++;
     finish();
     doezd();
-    
 
     if (crossCount == 1)
     {
@@ -128,7 +115,7 @@ void loop()
       left();
       left();
     }
-    else if (crossCount==7)
+    else if (crossCount == 7)
     {
       doezd();
     }
@@ -146,6 +133,14 @@ void loop()
     {
       perekrestok();
     }
-    
+    if (crossCount ==8)
+    {
+      // если мы попали на резкий поворот то мы проверяем находятся ли правый и центральный датчик на черном и поворачиваем
+      if (getIRSensorValue(IR_SENSOR_R_PIN) < blackLimit && getIRSensorValue(IR_SENSOR_M_PIN) < blackLimit && getIRSensorValue(IR_SENSOR_L_PIN) > blackLimit)
+      {
+        doezd();
+        rightWith();
+      }
+    }
   }
 }
