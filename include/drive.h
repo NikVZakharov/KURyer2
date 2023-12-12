@@ -12,8 +12,8 @@ void pregSomeTime(unsigned long timeToMove);
 void fixPositionAfterTurn();
 void driveToObjectOnBlack();
 void driveBackToCross();
-void leftWith();
-void rightWith();
+void leftLetterG();
+void rightLetterG();
 
 
 #endif

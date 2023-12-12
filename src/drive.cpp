@@ -164,55 +164,14 @@ while (!isOnCross())
   }
 }
 
-void rightWith()
+void rightLetterG()
 {
-  go(baseSpeed, -baseSpeed, 500); // Поворачиваем так, чтобы левый ИК датчик сместился с белого на черную линию
-  //  go(0, 0, baseDelay);
-  while (isOnBlack(IR_SENSOR_M_PIN)) // Поворачиваем пока левый ИК датчик на черной линии
-  {
-    go(baseSpeed, -baseSpeed);
-  }
-  // go(0, 0, baseDelay/3);
-  go(baseSpeed, -baseSpeed, 300); // Поворачиваем так, чтобы левый ИК датчик сместился с черной линии на белое поле
-  //  go(0, 0, baseDelay);
-  while (!isOnBlack(IR_SENSOR_M_PIN)) // Поворачиваем пока левый ИК датчик на белом поле
-  {
-    go(baseSpeed, -baseSpeed);
-    // if (checkBanka()) // Если увидели банку останавливаем поворот
-    // {
-    //   go(0, 0, baseDelay);
-    //   return; //Выход из функции
-    // }
-  }
-
-  fixPositionAfterTurn();
-
-  go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
-  
+ doezd();
+ right(); 
 }
 
-void leftWith()
+void leftLetterG()
 {
-  go(-baseSpeed, baseSpeed, 500); // Поворачиваем так, чтобы правый ИК датчик сместился с белого на черную линию
-  //  go(0, 0, baseDelay);
-  while (isOnBlack(IR_SENSOR_M_PIN)) // Поворачиваем пока правый ИК датчик на черной линии
-  {
-    go(-baseSpeed, baseSpeed);
-  }
-  // go(0, 0, baseDelay/3);
-  go(-baseSpeed, baseSpeed, 300); // Поворачиваем так, чтобы правый ИК датчик сместился с черной линии на белое поле
-  //  go(0, 0, baseDelay);
-  while (!isOnBlack(IR_SENSOR_M_PIN)) // Поворачиваем пока правый ИК датчик на белом поле
-  {
-    go(-baseSpeed, baseSpeed);
-    // if (checkBanka()) // Если увидели банку останавливаем поворот
-    // {
-    //   go(0, 0, baseDelay);
-    //   return; //Выход из функции
-    // }
-  }
-
-  fixPositionAfterTurn();
-
-  go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
+ doezd();
+ left();
 }

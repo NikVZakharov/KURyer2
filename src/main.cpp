@@ -44,7 +44,7 @@ int baseDelay = 1000;                // задержка между действ
 int crossCount = 0;                  // количество перекрестков
 int crossDelay = 700;                // то сколько проедет робот после того как датчики увидят перекресток
 int timeToMoveBackWithBanka = 1000;  // время, которое робот едет назад с банкой
-int blackLimit = 400;                // все что ниже-черная линия
+int blackLimit = 300;                // все что ниже-черная линия
 unsigned long startTime = 0;         // Время начала таймера
 unsigned long timeToMoveBanka = 900; // Время в течении которого выравниваем машину после поворота
 int distanceToTakeBanka = 6;         // расстояние на котром надо взять банку
@@ -91,8 +91,8 @@ void loop()
 
   obezdObject(); // проверяем нужно ли нам объехать банку
 
-  if (isOnCross())
-  {
+   if (isOnCross())
+   {
 
     crossCount++;
     finish();
@@ -110,6 +110,7 @@ void loop()
         preg(baseSpeed);
       }
       doezd();
+      go(baseSpeed,baseSpeed,timeToMoveBanka);
       driveBackToCross();
       doezd();
       left();
@@ -136,11 +137,11 @@ void loop()
     if (crossCount ==8)
     {
       // если мы попали на резкий поворот то мы проверяем находятся ли правый и центральный датчик на черном и поворачиваем
-      if (getIRSensorValue(IR_SENSOR_R_PIN) < blackLimit && getIRSensorValue(IR_SENSOR_M_PIN) < blackLimit && getIRSensorValue(IR_SENSOR_L_PIN) > blackLimit)
+      if (getIRSensorValue(IR_SENSOR_R_PIN) < 300 && getIRSensorValue(IR_SENSOR_L_PIN) < 800)
       {
-        doezd();
-        rightWith();
+        rightLetterG();
       }
+      
     }
   }
 }
