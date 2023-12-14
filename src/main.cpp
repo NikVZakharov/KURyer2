@@ -53,10 +53,12 @@ bool haveBanka = false;              // Флаг обнаружения банк
 int gainCoeff = 100;                 // Коэффициент усиления П регулятора при выравнивании после поворота
 int maxErrorTurnFix = 10;            // Макисмальная ошибка до которой идет выравнивание после поворота
 int obezdDelay = 1500;               // задержка при объезде банки
-int finishDelay = 2000;              // задержка при финишировании
+int finishDelay = 3000;              // задержка при финишировании
 int povorotDelay = 1000;             // задержка при повороте на 90 градусов
 int obezdObjectDelay = 2000;
 int distanceToCheckObject = 20;
+int whiteEdgeLimit=800;
+int blackEdgeLimit=200;
 
 void setup()
 {
@@ -89,11 +91,11 @@ void loop()
 
   // test();
 
-  obezdObject(); // проверяем нужно ли нам объехать банку
+  // obezdObject(); // проверяем нужно ли нам объехать банку
+  rightLetterG(); 
 
-   if (isOnCross())
-   {
-
+  if (isOnCross())
+  {
     crossCount++;
     finish();
     doezd();
@@ -110,7 +112,7 @@ void loop()
         preg(baseSpeed);
       }
       doezd();
-      go(baseSpeed,baseSpeed,timeToMoveBanka);
+      go(baseSpeed, baseSpeed, timeToMoveBanka);
       driveBackToCross();
       doezd();
       left();
@@ -134,14 +136,6 @@ void loop()
     {
       perekrestok();
     }
-    if (crossCount ==8)
-    {
-      // если мы попали на резкий поворот то мы проверяем находятся ли правый и центральный датчик на черном и поворачиваем
-      if (getIRSensorValue(IR_SENSOR_R_PIN) < 300 && getIRSensorValue(IR_SENSOR_L_PIN) < 800)
-      {
-        rightLetterG();
-      }
-      
-    }
-  }
+  }  
+    
 }

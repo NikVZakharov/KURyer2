@@ -54,12 +54,12 @@ void testFullTurn(){
 
 void test()
 {
-testIRSensors();
+//testIRSensors();
     // go(baseSpeed, baseSpeed); //тест моторов
 
     //preg(baseSpeed);
 
-     //testUZDF(); // тест переднего УЗ датчика
+     testUZDF(); // тест переднего УЗ датчика
 
        //testServo(); //тест сервопривода
        //testIsOnBlack();

@@ -6,16 +6,15 @@
 void go(int L, int R, int interval = 0, bool fixMotor = true)
 {
   digitalWrite(MOTOR_L_DIRECTION_PIN, L > 0 ? HIGH : LOW);                         // Управляем направлением левого мотора
-  analogWrite(MOTOR_L_SPEED_PIN, abs(fixMotor ? L * KOEFF_FIX_MOTOR_L_SPEED :L));                                          // Управляем скоростью левого мотора
+  analogWrite(MOTOR_L_SPEED_PIN, abs(fixMotor ? L * KOEFF_FIX_MOTOR_L_SPEED : L)); // Управляем скоростью левого мотора
   digitalWrite(MOTOR_R_DIRECTION_PIN, R > 0 ? HIGH : LOW);                         // Управляем направлением правого мотора
-  analogWrite(MOTOR_R_SPEED_PIN, abs(R)); // Управляем скоростью правого мотора
+  analogWrite(MOTOR_R_SPEED_PIN, abs(R));                                          // Управляем скоростью правого мотора
 
   // Serial.print("fixMotor: "); Serial.println(fixMotor);
   // Serial.print("L: "); Serial.print(abs(fixMotor ? L * KOEFF_FIX_MOTOR_L_SPEED :L)); Serial.print(" R: "); Serial.println(abs(R));
   // delay(2000);
 
   delay(interval);
-
 }
 void preg(int speed)
 {
@@ -31,14 +30,13 @@ void preg(int speed)
   // Отладочное сообщение (можно закомментировать при финальной сборке)
   // Serial.print("p_gain: "); Serial.print(p_gain); Serial.print(" E: "); Serial.println(E);
   // Serial.print("M1: "); Serial.print(M1); Serial.print(" M2: "); Serial.println(M2);
-  
-  go(M1, M2,0,false);
 
+  go(M1, M2, 0, false);
 }
 
 void fixPositionAfterTurn()
 {
- // Выравниваем робота после поворота пока ошибка(разность показаний левого и правого ИК датчика) не будет меньше maxErrorTurnFix
+  // Выравниваем робота после поворота пока ошибка(разность показаний левого и правого ИК датчика) не будет меньше maxErrorTurnFix
   while (currentError() < maxErrorTurnFix)
   {
     preg(0);
@@ -77,10 +75,9 @@ void right()
     // }
   }
 
- // fixPositionAfterTurn();
+  // fixPositionAfterTurn();
 
   go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
-  
 }
 
 void left()
@@ -104,7 +101,7 @@ void left()
     // }
   }
 
- // fixPositionAfterTurn();
+  // fixPositionAfterTurn();
 
   go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
 }
@@ -132,8 +129,10 @@ void start()
 
 void finish()
 {
+
   if (crossCount == FINISH_CROSS_COUNT)
   {
+    Serial.print("finish");
     go(baseSpeed, baseSpeed, finishDelay);
     go(0, 0);
     while (true)
@@ -147,18 +146,19 @@ void doezd()
   go(0, 0, baseDelay / 2);
 }
 
-void driveToObjectOnBlack(){
-    while (uzdF() > distanceToTakeBanka) // едем вперед на preg() пока расстояние до банки не будет меньше  distanceToTakeBanka
+void driveToObjectOnBlack()
+{
+  while (uzdF() > distanceToTakeBanka) // едем вперед на preg() пока расстояние до банки не будет меньше  distanceToTakeBanka
   {
     preg(baseSpeed);
     // go(baseSpeed, baseSpeed);
   }
 }
 
-
-//едем назад пока не увидим черную линию
-void driveBackToCross(){
-while (!isOnCross())
+// едем назад пока не увидим черную линию
+void driveBackToCross()
+{
+  while (!isOnCross())
   {
     go(-baseSpeed, -baseSpeed);
   }
@@ -166,12 +166,21 @@ while (!isOnCross())
 
 void rightLetterG()
 {
- doezd();
- right(); 
+  // если мы попали на резкий поворот то мы проверяем находятся ли правый и центральный датчик на черном и поворачиваем
+  if (getIRSensorValue(IR_SENSOR_R_PIN) < blackEdgeLimit && getIRSensorValue(IR_SENSOR_L_PIN) > whiteEdgeLimit)
+  {
+    doezd();
+    right();
+  }
 }
 
 void leftLetterG()
 {
- doezd();
- left();
+  // если мы попали на резкий поворот то мы проверяем находятся ли правый и центральный датчик на черном и поворачиваем
+  if (getIRSensorValue(IR_SENSOR_R_PIN) > whiteEdgeLimit && getIRSensorValue(IR_SENSOR_L_PIN) < blackEdgeLimit)
+  {
+    doezd();
+    left();
+  }
 }
+

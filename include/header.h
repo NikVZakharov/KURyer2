@@ -38,5 +38,7 @@ extern int finishDelay;
 extern int povorotDelay;
 extern int obezdObjectDelay;
 extern int distanceToCheckObject;
+extern int whiteEdgeLimit;
+extern int blackEdgeLimit;
 
 #endif
