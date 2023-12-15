@@ -75,9 +75,9 @@ void right()
     // }
   }
 
-  // fixPositionAfterTurn();
+   fixPositionAfterTurn();
 
-  go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
+  go(0, 0);
 }
 
 void left()
@@ -101,9 +101,9 @@ void left()
     // }
   }
 
-  // fixPositionAfterTurn();
+   fixPositionAfterTurn();
 
-  go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
+  go(0, 0); 
 }
 
 void pregSomeTime(unsigned long timeToMove)
@@ -113,7 +113,7 @@ void pregSomeTime(unsigned long timeToMove)
   {
     preg(baseSpeed);
   }
-  go(0, 0, baseDelay);
+  go(0, 0);
 }
 
 void start()
@@ -132,7 +132,6 @@ void finish()
 
   if (crossCount == FINISH_CROSS_COUNT)
   {
-    Serial.print("finish");
     go(baseSpeed, baseSpeed, finishDelay);
     go(0, 0);
     while (true)
@@ -164,23 +163,21 @@ void driveBackToCross()
   }
 }
 
-void rightLetterG()
+void turnGCross()
 {
   // если мы попали на резкий поворот то мы проверяем находятся ли правый и центральный датчик на черном и поворачиваем
   if (getIRSensorValue(IR_SENSOR_R_PIN) < blackEdgeLimit && getIRSensorValue(IR_SENSOR_L_PIN) > whiteEdgeLimit)
   {
     doezd();
     right();
+    pregSomeTime(300);
   }
-}
-
-void leftLetterG()
-{
-  // если мы попали на резкий поворот то мы проверяем находятся ли правый и центральный датчик на черном и поворачиваем
-  if (getIRSensorValue(IR_SENSOR_R_PIN) > whiteEdgeLimit && getIRSensorValue(IR_SENSOR_L_PIN) < blackEdgeLimit)
+  else  if (getIRSensorValue(IR_SENSOR_R_PIN) > whiteEdgeLimit && getIRSensorValue(IR_SENSOR_L_PIN) < blackEdgeLimit)
   {
     doezd();
     left();
+    pregSomeTime(300);
   }
 }
+
 

@@ -6,6 +6,6 @@ void MoveObject90grad();
 void moveToPutObjectOnBlack();
 void moveToTakeObjectOnBlack();
 void obezdObject();
-void perekrestok();
+void moveObjectFromCross();
 
 #endif

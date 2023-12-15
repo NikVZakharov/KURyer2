@@ -59,11 +59,12 @@ void test()
 
     //preg(baseSpeed);
 
-     testUZDF(); // тест переднего УЗ датчика
+    // testUZDF(); // тест переднего УЗ датчика
 
        //testServo(); //тест сервопривода
        //testIsOnBlack();
       // testIsOnCross();
    // testFullTurn();
+   testIRSensors();
 }
 

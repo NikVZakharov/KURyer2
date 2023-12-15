@@ -80,7 +80,7 @@ void obezdObject()
   }
 }
 // перемещение банки на другую сторону перекрестка
-void perekrestok()
+void moveObjectFromCross()
 {
   // crossCount++;
   // finish();

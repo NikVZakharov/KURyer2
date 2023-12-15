@@ -44,21 +44,21 @@ int baseDelay = 1000;                // задержка между действ
 int crossCount = 0;                  // количество перекрестков
 int crossDelay = 700;                // то сколько проедет робот после того как датчики увидят перекресток
 int timeToMoveBackWithBanka = 1000;  // время, которое робот едет назад с банкой
-int blackLimit = 300;                // все что ниже-черная линия
+int blackLimit = 600;                // все что ниже-черная линия
 unsigned long startTime = 0;         // Время начала таймера
 unsigned long timeToMoveBanka = 900; // Время в течении которого выравниваем машину после поворота
 int distanceToTakeBanka = 6;         // расстояние на котром надо взять банку
 int distanceToCheckBanka = 30;       // расстояние на котром ищем банку
 bool haveBanka = false;              // Флаг обнаружения банки -есть или нет банки на по направлению движения
-int gainCoeff = 100;                 // Коэффициент усиления П регулятора при выравнивании после поворота
+int gainCoeff = 300;                 // Коэффициент усиления П регулятора при выравнивании после поворота
 int maxErrorTurnFix = 10;            // Макисмальная ошибка до которой идет выравнивание после поворота
 int obezdDelay = 1500;               // задержка при объезде банки
 int finishDelay = 3000;              // задержка при финишировании
 int povorotDelay = 1000;             // задержка при повороте на 90 градусов
 int obezdObjectDelay = 2000;
 int distanceToCheckObject = 20;
-int whiteEdgeLimit=800;
-int blackEdgeLimit=200;
+int whiteEdgeLimit=700;
+int blackEdgeLimit=300;
 
 void setup()
 {
@@ -88,16 +88,16 @@ void loop()
 {
 
   preg(baseSpeed); // едем по preg с базовой скоростью
+  obezdObject(); // объезд препятствия
+  turnGCross(); // г образный поворот
+  finish(); // остановка после финиша
 
-  // test();
+ //  test();
 
-  // obezdObject(); // проверяем нужно ли нам объехать банку
-  rightLetterG(); 
-
+  // обработка перекрестков
   if (isOnCross())
   {
     crossCount++;
-    finish();
     doezd();
 
     if (crossCount == 1)
@@ -118,10 +118,6 @@ void loop()
       left();
       left();
     }
-    else if (crossCount == 7)
-    {
-      doezd();
-    }
 
     else if (crossCount == 8)
     {
@@ -132,9 +128,9 @@ void loop()
       moveToPutObjectOnBlack();
       left();
     }
-    else
+    else if (crossCount >=2 && crossCount <= 5)
     {
-      perekrestok();
+      moveObjectFromCross();
     }
   }  
     
