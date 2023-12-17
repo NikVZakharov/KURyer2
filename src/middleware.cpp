@@ -35,7 +35,7 @@ int currentError()
 bool isOnBlack(int sensor)
 {
   bool result = false;
-  if (analogRead(sensor) < blackLimit)
+  if (analogRead(sensor) < blackLimitCross)
   {
     result = true;
   }

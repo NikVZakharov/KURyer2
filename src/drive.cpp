@@ -2,6 +2,7 @@
 #include <header.h>
 #include <middleware.h>
 #include <uzd.h>
+#include <servoMotor.h>
 
 void go(int L, int R, int interval = 0, bool fixMotor = true)
 {
@@ -75,7 +76,7 @@ void right()
     // }
   }
 
-   fixPositionAfterTurn();
+   //fixPositionAfterTurn();
 
   go(0, 0);
 }
@@ -101,7 +102,7 @@ void left()
     // }
   }
 
-   fixPositionAfterTurn();
+   //fixPositionAfterTurn();
 
   go(0, 0); 
 }
@@ -166,13 +167,13 @@ void driveBackToCross()
 void turnGCross()
 {
   // если мы попали на резкий поворот то мы проверяем находятся ли правый и центральный датчик на черном и поворачиваем
-  if (getIRSensorValue(IR_SENSOR_R_PIN) < blackEdgeLimit && getIRSensorValue(IR_SENSOR_L_PIN) > whiteEdgeLimit)
+  if (getIRSensorValue(IR_SENSOR_R_PIN) < blackEdgeLimit && getIRSensorValue(IR_SENSOR_L_PIN) > whiteEdgeLimit && crossCount==8)
   {
     doezd();
     right();
     pregSomeTime(300);
   }
-  else  if (getIRSensorValue(IR_SENSOR_R_PIN) > whiteEdgeLimit && getIRSensorValue(IR_SENSOR_L_PIN) < blackEdgeLimit)
+  else  if (getIRSensorValue(IR_SENSOR_R_PIN) > whiteEdgeLimit && getIRSensorValue(IR_SENSOR_L_PIN) < blackEdgeLimit && crossCount==8)
   {
     doezd();
     left();
@@ -180,4 +181,66 @@ void turnGCross()
   }
 }
 
+void MoveBankaCross(){
+  left();
+  if (uzdF()<distanceToCheckBanka)
+  {
+    while (uzdF()>distanceToTakeBanka)
+    {
+      preg(baseSpeed);
+    }
+    go(0,0,baseDelay);
+    closeServo();
+    right();
+    while (!isOnCross())
+    {
+     preg(baseSpeed);
+    }
+    doezd();
+    pregSomeTime(2000);
+    go(baseSpeed,baseSpeed,baseDelay);
+    go(0,0,baseDelay);
+    openServo();
+    go(-baseSpeed,-baseSpeed,baseDelay);
+    go(0,0,baseDelay);
+    right();
+    while (!isOnCross())
+    {
+     preg(baseSpeed);
+    }
+    right();
+  }
+  else  
+  {
+   right();
+  if (uzdF()<distanceToCheckBanka)
+  {
+    while (uzdF()>distanceToTakeBanka)
+    {
+      preg(baseSpeed);
+    }
+    go(0,0,baseDelay);
+    closeServo();
+    right();
+    while (!isOnCross())
+    {
+     preg(baseSpeed);
+    }
+    doezd();
+    pregSomeTime(2000);
+    go(baseSpeed,baseSpeed,baseDelay);
+    go(0,0,baseDelay);
+    openServo();
+    go(-baseSpeed,-baseSpeed,baseDelay);
+    go(0,0,baseDelay);
+    right();
+    while (!isOnCross())
+    {
+     preg(baseSpeed);
+    }
+    left();
+  } 
+}
+
+}
 
