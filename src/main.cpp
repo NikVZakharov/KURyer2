@@ -67,6 +67,8 @@ void setup()
   pinMode(IR_SENSOR_L_PIN, INPUT); // пин датчика ИК - А0
   pinMode(IR_SENSOR_R_PIN, INPUT); // пин датчика ИК - А1
   pinMode(IR_SENSOR_M_PIN, INPUT); // пин датчика ИК - А2
+  for (int i = 2; i <= 5; i++)
+    pinMode(i, OUTPUT);
 
   initServo();
 #if DEBUG
@@ -140,76 +142,32 @@ void moveBankaNextCross()
   left();
 }
 
+int l = 15;
+int Kp = 20, Ki = 0, Kd = 0;
+float I = 0;
+int S=0;
+int uzd(int tr, int echo) {
+  pinMode(tr,OUTPUT); pinMode(echo,INPUT);
+  digitalWrite(7, 0);
+  delayMicroseconds(2);
+  digitalWrite(7, 1);
+  delayMicroseconds(10);
+  digitalWrite(7, 0);
+  S=0.6*S+0.4*(0.01723 * pulseIn(8, 1));
+  return S;
+}
 void loop()
 {
 
   // test();
 
-  preg(baseSpeed);
-
-  if (isOnCross())
-  {
-
-    crossCount++;
-    doezd();
-    finish();
-    if (crossCount == 4)
-    {
-      moveBankaTake();
-      right();
-    }
-    if (crossCount == 5)
-    {
-      left();
-      moveBankaPut();
-     // pregSomeTime(200);
-      right();
-    }
-    if (crossCount == 6)
-    {
-      right();
-    }
-    // if (crossCount==7)
-    // {
-    //   moveBankaTake();
-    //   right();
-    // }
-    if (crossCount == 9)
-    {
-      right();
-    }
-    // if (crossCount==10)
-    // {
-    //   right();
-    // }
-    if (crossCount == 11)
-    {
-      left();
-    }
-    // if (crossCount==12)
-    // {
-    //   moveBankaPut();
-    //   left();
-    // }
-    // if (crossCount==13)
-    // {
-    //   left();
-    // }
-    // if (crossCount==15)
-    // {
-    //   left();
-    // }
-    // if (crossCount==7)
-    // {
-    //   right();
-    // }
-    // if (crossCount==10)
-    // {
-    //   right();
-    // }
-    // if (crossCount==12)
-    // {
-    //   left();
-    // }
-  }
+  int E = uzd(9,10) - l;
+  int D = E - I;
+  int U = Kp * E + Ki * I + Kd * D;
+  int M1 = baseSpeed + U;
+  M1 = constrain(M1, -255, 255);
+  int M2 = baseSpeed - U;
+  M2 = constrain(M2, -255, 255);
+  go(M1, M2);
+  I=0.95*I+E;
 }
