@@ -11,7 +11,7 @@ extern const int MOTOR_L_SPEED_PIN;
 extern const int MOTOR_R_DIRECTION_PIN;
 extern const int MOTOR_R_SPEED_PIN;
 extern const int SERVO_PIN;
-extern const int FINISH_CROSS_COUNT;
+  
 extern const float KOEFF_FIX_MOTOR_L_SPEED;
 extern const bool FIXPOSITION;
 extern const int MAX_MOTOR_SPEED;
@@ -22,7 +22,8 @@ extern float KOEF_ERROR;
 extern int baseDelay;
 extern int servoOpenPosition;
 extern int servoClosePosition;
-extern int blackLimit;
+extern int blackLimitPreg;
+extern int blackLimitCross;
 extern unsigned long startTime;
 extern unsigned long timeToMoveBanka;
 extern int distanceToTakeBanka;
@@ -36,5 +37,12 @@ extern int maxErrorTurnFix;
 extern int obezdDelay;
 extern int finishDelay;
 extern int povorotDelay;
+extern int obezdObjectDelay;
+extern int distanceToCheckObject;
+extern int whiteEdgeLimit;
+extern int blackEdgeLimit;
+extern int wallPosition;
+extern int FINISH_CROSS_COUNT;
+extern int finishcount;
 
 #endif

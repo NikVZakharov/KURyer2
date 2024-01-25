@@ -10,5 +10,10 @@ void finish();
 void doezd();
 void pregSomeTime(unsigned long timeToMove);
 void fixPositionAfterTurn();
+void driveToObjectOnBlack();
+void driveBackToCross();
+void turnGCross();
+void MoveBankaCross();
+
 
 #endif

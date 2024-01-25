@@ -35,13 +35,14 @@ int currentError()
 bool isOnBlack(int sensor)
 {
   bool result = false;
-  if (analogRead(sensor) < blackLimit)
+  if (analogRead(sensor) < blackLimitCross)
   {
     result = true;
   }
   return result;
 }
 
+//находятся ли датчики на черной линии
 bool isOnCross()
 {
   bool result = false;

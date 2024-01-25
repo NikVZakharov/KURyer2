@@ -14,6 +14,8 @@
 #include <UZD.h>
 #include <header.h>
 #include <servoMotor.h>
+#include <banka.h>
+
 #include <log.h>
 #include <test.h>
 
@@ -30,7 +32,7 @@ const int MOTOR_L_SPEED_PIN = 3;
 const int MOTOR_R_DIRECTION_PIN = 4;
 const int MOTOR_R_SPEED_PIN = 5;
 const int SERVO_PIN = 13;
-const int FINISH_CROSS_COUNT = 12;
+ 
 const float KOEFF_FIX_MOTOR_L_SPEED = 0.8;
 const bool FIXPOSITION = true; // выравниваемся на повороте или нет
 const int MAX_MOTOR_SPEED = 250;
@@ -42,18 +44,20 @@ int servoOpenPosition = 60;          // градус открытого серв
 int servoClosePosition = 130;        // градус закытого серво
 int baseDelay = 1000;                // задержка между действиями
 int crossCount = 0;                  // количество перекрестков
-int crossDelay = 500;                // то сколько проедет робот после того как датчики увидят перекресток
 int timeToMoveBackWithBanka = 1000;  // время, которое робот едет назад с банкой
-int blackLimit = 500;                // все что ниже-черная линия
 unsigned long startTime = 0;         // Время начала таймера
 unsigned long timeToMoveBanka = 900; // Время в течении которого выравниваем машину после поворота
-int distanceToTakeBanka = 5;         // расстояние на котром надо взять банку
-int distanceToCheckBanka = 30;       // расстояние на котром ищем банку
+
+int distanceToTakeBanka = 6;         // расстояние на котром надо взять банку
+int distanceToCheckBanka = 20;       // расстояние на котром ищем банку
+
 bool haveBanka = false;              // Флаг обнаружения банки -есть или нет банки на по направлению движения
-int gainCoeff = 50;                  // Коэффициент усиления П регулятора при выравнивании после поворота
+int gainCoeff = 300;                 // Коэффициент усиления П регулятора при выравнивании после поворота
 int maxErrorTurnFix = 10;            // Макисмальная ошибка до которой идет выравнивание после поворота
 int obezdDelay = 1500;               // задержка при объезде банки
-int finishDelay = 2000;              // задержка при финишировании
+
+int finishDelay = 600;              // задержка при финишировании
+
 int povorotDelay = 1000;             // задержка при повороте на 90 градусов
 
 Encoder enc1;
@@ -87,68 +91,27 @@ enc2.setup(8,9);
 #endif
 
   start();
-}
-
-void moveBankaTake()
-{
-  while (uzdF() > distanceToTakeBanka) // едем вперед на preg() пока расстояние до банки не будет меньше  distanceToTakeBanka
-  {
-    preg(baseSpeed);
-    // go(baseSpeed, baseSpeed);
-  }
-  go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
-  closeServo();        // закрываем сервопривод
-  while (!isOnCross())
-  {
-    go(-baseSpeed, -baseSpeed);
-  }
-  doezd();
-
-  // while (!isOnCross()) // Едем вперед пока не доедем до перекрестка
-  // {
-  //   preg(baseSpeed);
-  // }
-  // go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
-}
-
-void moveBankaPut()
-{
-  // while (isOnBlack(IR_SENSOR_M_PIN))
-  // {
-  //   preg(baseSpeed);
-  // }
-  pregSomeTime(timeToMoveBanka);
-
-  go(0, 0, baseDelay);
-  openServo();
-  while (!isOnCross())
-  {
-    go(-baseSpeed, -baseSpeed);
-  }
-  doezd();
-}
-
-void MoveBanka90grad()
-{
-
-  moveBankaTake();
   right();
-  right();
-  right();
-  moveBankaPut();
+  if (uzdF()<=20)
+  {
+    wallPosition=1;
+  }
+  else if (uzdF()>20 && uzdF()<30)
+  {
+    wallPosition=2;
+  }
+  else if (uzdF()>30 && uzdF()<40)
+  {
+    wallPosition=3;
+  }
+  else
+  {
+    wallPosition=4;
+  }
   left();
-}
-
-void moveBankaNextCross()
-{
-  go(baseSpeed, -baseSpeed, povorotDelay);
-  while (distanceToTakeBanka > 10)
-  {
-    go(baseSpeed, baseSpeed);
-  }
-  moveBankaTake();
-  doezd();
-  left();
+  crossCount=0;
+  
+  
 }
 
 /*void ulica(int n)
