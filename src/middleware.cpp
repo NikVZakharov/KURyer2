@@ -45,7 +45,7 @@ bool isOnBlack(int sensor)
 bool isOnCross()
 {
   bool result = false;
-  if (isOnBlack(IR_SENSOR_L_PIN) && isOnBlack(IR_SENSOR_R_PIN))
+  if (isOnBlack(8) && isOnBlack(9))
   {
     result = true;
   }
