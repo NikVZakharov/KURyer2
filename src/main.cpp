@@ -19,6 +19,9 @@
 #include <log.h>
 #include <test.h>
 
+//#include <LiquidCrystal.h>
+//LiquidCrystal LCD(6,7,8,9,10,11);
+
 const int UZF_TRIGGER_PIN = 7;
 const int UZF_ECHO_PIN = 8;
 // Устанавливаем номера пинов для датчиков линии
@@ -71,8 +74,19 @@ int FINISH_CROSS_COUNT = 6;
 int finishcount=0;
 
 
+
+char abcd=' ';
+char ABCD[6];
+bool flag=0;
+
+
 void setup()
 {
+for(int i=2; i<=5; i++)pinMode(i,OUTPUT);
+  for(int i=12; i<=16; i++)pinMode(i,INPUT);
+  //LCD.begin(16,2);
+  //LCD.print("jndkdjnwkjcn");
+
   pinMode(MOTOR_L_DIRECTION_PIN, OUTPUT); // напр. мотора лев.
   pinMode(MOTOR_L_SPEED_PIN, OUTPUT);     // скор. мотора лев.
   pinMode(MOTOR_R_DIRECTION_PIN, OUTPUT); // напр. мотора прав.
@@ -93,130 +107,180 @@ void setup()
 #endif
 
   start();
-  right();
-  if (uzdF()<=20)
+  
+  
+}
+
+void loop(){
+
+preg(baseSpeed);
+doezd();
+
+
+if (isOnCross())
+{
+  /**/
+  while (crossCount<crossCount+ABCD[0]-'A')
   {
-    wallPosition=1;
+    preg(baseSpeed);
   }
-  else if (uzdF()>20 && uzdF()<30)
+  if (ABCD[1]-'3'>0)
   {
-    wallPosition=2;
+    left();
+    while (crossCount<crossCount+abs(ABCD[1]-'3'))
+  {
+    preg(baseSpeed);
   }
-  else if (uzdF()>30 && uzdF()<40)
-  {
-    wallPosition=3;
   }
   else
   {
-    wallPosition=4;
+      right();
+    while (crossCount<crossCount+abs(ABCD[1]-'3'))
+  {
+    preg(baseSpeed);
+  }
+  }
+  
+  left();
+  left();
+    if (ABCD[1]-'3'>0)
+  {
+    while (crossCount<crossCount+abs(ABCD[1]-'3'))
+  {
+    preg(baseSpeed);
+  }
+
+  right();
+  }
+
+  else
+  {
+      
+    while (crossCount<crossCount+abs(ABCD[1]-'3'))
+  {
+    preg(baseSpeed);
   }
   left();
-  crossCount=0;
-  
-  
-}
+  }
 
-void loop()
-{
-  
-   preg(baseSpeed); // едем по preg с базовой скоростью
-   obezdObject();   // объезд препятствия
-   finish();
-
-  //test();
-
-  //  обработка перекрестков
-  if (isOnCross())
+  while (crossCount<crossCount+ABCD[0]-'A')
   {
-    crossCount++;
-    doezd();
-
-    
-    if (crossCount==5)
-    {
-      right();
-    }
-    if (crossCount==6)
-    {
-      pregSomeTime(2200);
-      go(0,0,baseDelay);
-      go(-baseSpeed,baseSpeed,povorotDelay*1.8);
-      if (uzdF()<distanceToCheckBanka)
-      {
-        finishcount++;
-      }
-      right();
-      pregSomeTime(2200);
-      go(0,0,baseDelay);
-      go(-baseSpeed,baseSpeed,povorotDelay*1.8);
-      if (uzdF()<distanceToCheckBanka)
-      {
-        finishcount++;
-      }
-      right();
-      pregSomeTime(2200);
-      go(0,0,baseDelay);
-      go(-baseSpeed,baseSpeed,povorotDelay*1.8);
-      if (uzdF()<distanceToCheckBanka)
-      {
-        finishcount++;
-      }
-      right();
-    }
-    if (crossCount==7)
-    {
-      right();
-      FINISH_CROSS_COUNT=FINISH_CROSS_COUNT+finishcount;
-    }
-    
-    
-    
-    
-    
+    preg(baseSpeed);
+  }
   
-   
+ /**/ 
+
+/**/
+  while (crossCount<crossCount+ABCD[2]-'A')
+  {
+    preg(baseSpeed);
+  }
+  if (ABCD[3]-'3'>0)
+  {
+    left();
+    while (crossCount<crossCount+abs(ABCD[3]-'3'))
+  {
+    preg(baseSpeed);
+  }
+  }
+  else
+  {
+      right();
+    while (crossCount<crossCount+abs(ABCD[3]-'3'))
+  {
+    preg(baseSpeed);
+  }
+  }
+  
+  left();
+  left();
+    if (ABCD[3]-'3'>0)
+  {
+    while (crossCount<crossCount+abs(ABCD[3]-'3'))
+  {
+    preg(baseSpeed);
+  }
+
+  right();
+  }
+
+  else
+  {
+      
+    while (crossCount<crossCount+abs(ABCD[3]-'3'))
+  {
+    preg(baseSpeed);
+  }
+  left();
+  }
+
+  while (crossCount<crossCount+ABCD[2]-'A')
+  {
+    preg(baseSpeed);
+  }
+  
+ /**/ 
+
+/**/
+  while (crossCount<crossCount+ABCD[4]-'A')
+  {
+    preg(baseSpeed);
+  }
+  if (ABCD[5]-'3'>0)
+  {
+    left();
+    while (crossCount<crossCount+abs(ABCD[5]-'3'))
+  {
+    preg(baseSpeed);
+  }
+  }
+  else
+  {
+      right();
+    while (crossCount<crossCount+abs(ABCD[5]-'3'))
+  {
+    preg(baseSpeed);
+  }
+  }
+  
+  left();
+  left();
+    if (ABCD[5]-'3'>0)
+  {
+    while (crossCount<crossCount+abs(ABCD[5]-'3'))
+  {
+    preg(baseSpeed);
+  }
+
+  right();
+  }
+
+  else
+  {
+      
+    while (crossCount<crossCount+abs(ABCD[5]-'3'))
+  {
+    preg(baseSpeed);
+  }
+  left();
+  }
+
+  while (crossCount<crossCount+ABCD[4]-'A')
+  {
+    preg(baseSpeed);
+  }
+  
+ /**/ 
 
 
-
-
-
-
-
-
-
-
-
-  //   if (crossCount == 1)
-  //   {
-  //     right();
-  //   }
-  //   else if (crossCount == 6)
-  //   {
-  //     left();
-  //     while (!isOnCross())
-  //     {
-  //       preg(baseSpeed);
-  //     }
-  //     doezd();
-  //     go(baseSpeed, baseSpeed, timeToMoveBanka*1.3);
-  //     driveBackToCross();
-  //     doezd();
-  //     left();
-  //     left();
-  //   }
-
-  //   else if (crossCount == 8)
-  //   {
-  //     left();
-  //     moveToTakeObjectOnBlack();
-  //     right();
-  //     right();
-  //     moveToPutObjectOnBlack();
-  //     left();
-  //   }
-  //   else if (crossCount >= 2 && crossCount <= 5)
-  //   {
-  //     moveObjectFromCross();
-  //   }
-    }
 }
+
+  
+
+
+
+}
+
+
+
+

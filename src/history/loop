@@ -1,0 +1,76 @@
+  right();
+  if (uzdF()<=20)
+  {
+    wallPosition=1;
+  }
+  else if (uzdF()>20 && uzdF()<30)
+  {
+    wallPosition=2;
+  }
+  else if (uzdF()>30 && uzdF()<40)
+  {
+    wallPosition=3;
+  }
+  else
+  {
+    wallPosition=4;
+  }
+  left();
+  crossCount=0;
+
+
+  
+void loop()
+{
+  
+   preg(baseSpeed); // едем по preg с базовой скоростью
+   obezdObject();   // объезд препятствия
+   finish();
+
+  //test();
+
+  //  обработка перекрестков
+  if (isOnCross())
+  {
+    crossCount++;
+    doezd();
+
+    
+    if (crossCount==5)
+    {
+      right();
+    }
+    if (crossCount==6)
+    {
+      pregSomeTime(2200);
+      go(0,0,baseDelay);
+      go(-baseSpeed,baseSpeed,povorotDelay*1.8);
+      if (uzdF()<distanceToCheckBanka)
+      {
+        finishcount++;
+      }
+      right();
+      pregSomeTime(2200);
+      go(0,0,baseDelay);
+      go(-baseSpeed,baseSpeed,povorotDelay*1.8);
+      if (uzdF()<distanceToCheckBanka)
+      {
+        finishcount++;
+      }
+      right();
+      pregSomeTime(2200);
+      go(0,0,baseDelay);
+      go(-baseSpeed,baseSpeed,povorotDelay*1.8);
+      if (uzdF()<distanceToCheckBanka)
+      {
+        finishcount++;
+      }
+      right();
+    }
+    if (crossCount==7)
+    {
+      right();
+      FINISH_CROSS_COUNT=FINISH_CROSS_COUNT+finishcount;
+    }
+    }
+}
