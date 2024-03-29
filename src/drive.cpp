@@ -1,39 +1,81 @@
+
+
 #include <Arduino.h>
 #include <header.h>
 #include <middleware.h>
 #include <uzd.h>
 #include <servoMotor.h>
+#include <LCD.h>
+#include <encoder.h>
 
-void go(int L, int R, int interval = 0, bool fixMotor = true)
+
+void go(int L, int R, int interval = 0)
 {
   digitalWrite(MOTOR_L_DIRECTION_PIN, L > 0 ? HIGH : LOW);                         // Управляем направлением левого мотора
-  analogWrite(MOTOR_L_SPEED_PIN, abs(fixMotor ? L * KOEFF_FIX_MOTOR_L_SPEED : L)); // Управляем скоростью левого мотора
+  analogWrite(MOTOR_L_SPEED_PIN, abs(L)); // Управляем скоростью левого мотора
   digitalWrite(MOTOR_R_DIRECTION_PIN, R > 0 ? HIGH : LOW);                         // Управляем направлением правого мотора
   analogWrite(MOTOR_R_SPEED_PIN, abs(R));                                          // Управляем скоростью правого мотора
 
-  // Serial.print("fixMotor: "); Serial.println(fixMotor);
-  // Serial.print("L: "); Serial.print(abs(fixMotor ? L * KOEFF_FIX_MOTOR_L_SPEED :L)); Serial.print(" R: "); Serial.println(abs(R));
-  // delay(2000);
+  //LCDprint(0, 5, L);
+  //LCDprint(1, 5, R);
 
   delay(interval);
 }
 void preg(int speed)
 {
-  float p_gain = (speed == 0) ? KOEF_ERROR * gainCoeff : KOEF_ERROR;
-
+  //float p_gain = (speed == 0) ? KOEF_ERROR * gainCoeff : KOEF_ERROR;
+  float p_gain =koef_preg_p;
   int E = currentError();
 
-  int M1 = speed + E * p_gain;
+  int uprvozd = E * koef_preg_p;
+
+  int M1 = speed + uprvozd;
   M1 = constrain(M1, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
-  int M2 = speed - E * p_gain;
+  int M2 = speed - uprvozd;
   M2 = constrain(M2, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
 
-  // Отладочное сообщение (можно закомментировать при финальной сборке)
-  // Serial.print("p_gain: "); Serial.print(p_gain); Serial.print(" E: "); Serial.println(E);
-  // Serial.print("M1: "); Serial.print(M1); Serial.print(" M2: "); Serial.println(M2);
-
-  go(M1, M2, 0, false);
+  // LCDprint(0, 0, M1);
+  // LCDprint(1, 0, M2);
+  // LCDprint(1, 8, E);
+  // LCDprint(1, 8, uprvozd);
+  
+  go(M1, M2, 0);
 }
+
+
+void encpid(int V, int K ,int N=0)
+{
+  int E = getEncoder1() - getEncoder2();
+
+  int uprvozd = K * E;
+
+  int M1=V + uprvozd;
+  M1 = constrain(M1, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
+  int M2=V - uprvozd;
+  M2 = constrain(M2, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
+  go(M1, M2, 0);
+
+  // LCDprint(0, 0, M1);
+  // LCDprint(1, 0, M2);
+  // LCDprint(1, 8, E);
+  // LCDprint(1, 8, uprvozd);
+  
+  // if ((getEncoder1() >= N || getEncoder2() >= N) && N>0)
+  // {
+  //   go(0, 0);
+  //   delay(2000);
+  //   clearEncoder1();
+  //   clearEncoder2();
+  // }
+}
+
+
+
+
+
+
+
+
 
 void fixPositionAfterTurn()
 {

@@ -2,6 +2,7 @@
 #include <header.h>
 #include <drive.h>
 #include <uzd.h>
+#include <LCD.h>
 
 // Функция для нормализации значений, которые выдает ИК датчик
 int getIRSensorValue(int sensor)
@@ -27,8 +28,11 @@ int getIRSensorValue(int sensor)
 // Функция возвращает значение ошибки между показаниями левого и правого ИК датчика
 int currentError()
 {
-
-  return getIRSensorValue(IR_SENSOR_L_PIN) - getIRSensorValue(IR_SENSOR_R_PIN);
+int x=getIRSensorValue(IR_SENSOR_L_PIN);
+int y=getIRSensorValue(IR_SENSOR_R_PIN);
+//LCDprint(0, 0, x);
+//LCDprint(1, 0, y);
+  return x - y;
 }
 
 

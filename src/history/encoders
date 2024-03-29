@@ -1,0 +1,108 @@
+
+#include <LiquidCrystal_I2C.h>
+#include <Wire.h>
+#include <arduino_encoder.h>
+#include <PinChangeInterrupt.h>
+#include <PinChangeInterruptBoards.h>
+#include <PinChangeInterruptPins.h>
+#include <PinChangeInterruptSettings.h>
+#include <Arduino.h>
+
+#define BASE_SPEED 150
+#define SENSOR_1 14
+#define SENSOR_2 15
+#define LMN 2
+#define RMN 4
+#define LMS 3
+#define RMS 5
+Encoder enc1;
+Encoder enc2;
+
+
+
+
+
+void setup()
+{
+  for (int i = 2; i <= 5; i++)
+    pinMode(i, OUTPUT);
+  enc1.setup(6, 7);
+  enc2.setup(8, 9);
+  enc1.reverse();
+  enc2.reverse();
+  Serial.begin(9600);
+}
+
+
+
+
+
+
+void encpid(int K, int V, int N)
+{
+  int error = enc1.get() - enc2.get();
+
+  int uprvozd = K * error;
+  go(constrain(V + uprvozd, -250, 255), constrain(V - uprvozd, -250, 255));
+  if (enc1.get() >= N || enc2.get() >= N)
+  {
+    go(0, 0);
+    delay(2000);
+    enc1.clear();
+    enc2.clear();
+  }
+}
+
+void encleft(int K, int V, int N)
+{
+  int error = abs(enc1.get()) - abs(enc2.get());
+  int uprvozd = K * error;
+  go(constrain(V - uprvozd, -250, 255), -constrain(V + uprvozd, -250, 255));
+  if (abs(enc1.get()) >= N || abs(enc2.get()) >= N)
+  {
+    go(0, 0);
+    delay(2000);
+    enc1.clear();
+    enc2.clear();
+  }
+  else
+    pid(BASE_SPEED, 0.3);
+}
+
+
+
+
+void ulica(int T) {
+  if (analogRead(A0)<500 && analogRead(A1)<500)
+  {
+    ensPidN(V,K,N);
+    N++;
+    if(T==N) {N=0; Step++;}
+  }
+  else pid(BASE_SPEED,0.3);
+} 
+
+
+void pid(int speed, float K)
+{
+  float p_gain = (speed == 0) ? K * gainCoeff : KOEF_ERROR;
+
+  int E = currentError();
+
+  int M1 = speed + E * p_gain;
+  M1 = constrain(M1, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
+  int M2 = speed - E * p_gain;
+  M2 = constrain(M2, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
+
+  // Отладочное сообщение (можно закомментировать при финальной сборке)
+  // Serial.print("p_gain: "); Serial.print(p_gain); Serial.print(" E: "); Serial.println(E);
+  // Serial.print("M1: "); Serial.print(M1); Serial.print(" M2: "); Serial.println(M2);
+  
+  go(M1, M2,0,false);
+
+}
+
+
+void loop(){
+//encpid(5, BASE_SPEED, 1330 * 2);
+}

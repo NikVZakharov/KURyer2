@@ -1,0 +1,326 @@
+#include <LiquidCrystal_I2C.h>
+#include <Wire.h>
+#include <arduino_encoder.h>
+#include <PinChangeInterrupt.h>
+#include <PinChangeInterruptBoards.h>
+#include <PinChangeInterruptPins.h>
+#include <PinChangeInterruptSettings.h>
+#define DEBUG 0
+
+#if DEBUG
+#include "avr8-stub.h"
+#else
+
+#endif
+
+#include <Arduino.h>
+#include <NewPing.h>
+
+#include <drive.h>
+#include <middleware.h>
+#include <UZD.h>
+#include <header.h>
+#include <servoMotor.h>
+#include <banka.h>
+
+#include <log.h>
+#include <test.h>
+
+
+
+const int UZF_TRIGGER_PIN = 7;
+const int UZF_ECHO_PIN = 8;
+// Устанавливаем номера пинов для датчиков линии
+const int IR_SENSOR_L_PIN = A0;
+const int IR_SENSOR_R_PIN = A1;
+const int IR_SENSOR_M_PIN = A2;
+const int MOTOR_L_DIRECTION_PIN = 2;
+const int MOTOR_L_SPEED_PIN = 3;
+const int MOTOR_R_DIRECTION_PIN = 4;
+const int MOTOR_R_SPEED_PIN = 5;
+const int SERVO_PIN = 13;
+
+
+
+
+
+
+const float KOEFF_FIX_MOTOR_L_SPEED = 0.8;
+const bool FIXPOSITION = true; // выравниваемся на повороте или нет
+const int MAX_MOTOR_SPEED = 250;
+
+int baseSpeed = 200; // базовая скорость
+int minIRL = 200, minIRR = 200, maxIRL = 800, maxIRR = 800;
+float KOEF_ERROR = 0.4;              // уменьшаем или увеличиваем ошибку чтобы не колбасило робота
+int servoOpenPosition = 60;          // градус открытого серво
+int servoClosePosition = 130;        // градус закытого серво
+int baseDelay = 1000;                // задержка между действиями
+int crossCount = 0;                  // количество перекрестков
+int timeToMoveBackWithBanka = 1000;  // время, которое робот едет назад с банкой
+unsigned long startTime = 0;         // Время начала таймера
+unsigned long timeToMoveBanka = 900; // Время в течении которого выравниваем машину после поворота
+
+int distanceToTakeBanka = 6;         // расстояние на котром надо взять банку
+int distanceToCheckBanka = 20;       // расстояние на котром ищем банку
+
+bool haveBanka = false;              // Флаг обнаружения банки -есть или нет банки на по направлению движения
+int gainCoeff = 300;                 // Коэффициент усиления П регулятора при выравнивании после поворота
+int maxErrorTurnFix = 10;            // Макисмальная ошибка до которой идет выравнивание после поворота
+int obezdDelay = 1500;               // задержка при объезде банки
+
+int finishDelay = 600;              // задержка при финишировании
+
+int povorotDelay = 1000;             // задержка при повороте на 90 градусов
+int obezdObjectDelay = 2000;
+int distanceToCheckObject = 30;
+
+int crossDelay = 600;                // то сколько проедет робот после того как датчики увидят перекресток
+int whiteEdgeLimit = 550;
+int blackEdgeLimit = 150;
+int blackLimitPreg = 500;            // все что ниже-черная линия для Прегулятора
+int blackLimitCross = 400;           //   все что ниже-черная линия для определения перекрестка
+
+int wallPosition=1;
+int FINISH_CROSS_COUNT = 6;
+int finishcount=0;
+bool coordinatesSet = false;
+
+// #define BASE_SPEED 150
+// #define SENSOR_1 14
+// #define SENSOR_2 15
+// #define LMN 2
+// #define RMN 4
+// #define LMS 3
+// #define RMS 5
+Encoder enc1;
+Encoder enc2;
+char abcd = ' ';
+char ABCD[6];
+bool flag = false;
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+int maxn = 0;
+bool coordset = false;
+
+
+
+void sdvigabcd(char coord)
+{
+  ABCD[0] = ABCD[1];
+  ABCD[1] = ABCD[2];
+  ABCD[2] = ABCD[3];
+  ABCD[3] = ABCD[4];
+  ABCD[4] = ABCD[5];
+  ABCD[5] = coord;
+}
+
+
+
+void setN()
+{
+  char coordinate;
+  int enc = enc1.get();
+  int num = map(enc, 0, 1023, 0, 12);
+  Serial.println(String(enc) + " " + String(num));
+  switch (num)
+  {
+  case 1:{coordinate = 'A'; break; }
+  case 2:{coordinate = 'B';break; }
+  case 3:{coordinate = 'C';break; }
+  case 4:{ coordinate = 'D'; break;}
+  case 5:{coordinate = 'E';break; }
+  case 6:{ coordinate = 'F';break; }
+  case 7:{coordinate = 'G';break; }
+  case 8:{coordinate = '1';break;}
+  case 9:{coordinate = '2';break; }
+  case 10:{coordinate = '3';break;}
+  case 11:{coordinate = '4';break;}
+  case 12:{coordinate = '5';break; }
+  }
+  lcd.setCursor(0, 1);
+  lcd.print(coordinate);
+  if (enc2.get() > 60 || enc2.get() <= -60)
+  {
+    enc2.clear();
+    if (flag == 0)
+    {
+      flag = 1;
+      sdvigabcd(coordinate);
+    }
+    else
+      flag = 0;
+    lcd.setCursor(8, 1);
+    lcd.print(ABCD[0]);
+    lcd.print(ABCD[1]);
+    lcd.print(" ");
+    lcd.print(ABCD[2]);
+    lcd.print(ABCD[3]);
+    lcd.print(" ");
+    lcd.print(ABCD[4]);
+    lcd.print(ABCD[5]);
+    lcd.print(" ");
+  }
+}
+
+
+
+void setup()
+{
+  // put your setup code here, to run once: v
+  for (int i = 2; i <= 5; i++)
+    pinMode(i, OUTPUT);
+
+  pinMode(MOTOR_L_DIRECTION_PIN, OUTPUT); // напр. мотора лев.
+  pinMode(MOTOR_L_SPEED_PIN, OUTPUT);     // скор. мотора лев.
+  pinMode(MOTOR_R_DIRECTION_PIN, OUTPUT); // напр. мотора прав.
+  pinMode(MOTOR_R_SPEED_PIN, OUTPUT);     // скор. мотора прав.
+  //  pinMode(7, OUTPUT); // пинок дальномера uzdL - левого
+  // pinMode(UZF_TRIGGER_PIN, OUTPUT); // пинок дальномера uzdF - фронтального
+  // // pinMode(8, INPUT);  // эхо-прием дальномера uzdL - левого
+  // pinMode(UZF_ECHO_PIN, INPUT);    // эхо-прием дальномера uzdF - фронтального
+  pinMode(IR_SENSOR_L_PIN, INPUT); // пин датчика ИК - А0
+  pinMode(IR_SENSOR_R_PIN, INPUT); // пин датчика ИК - А1
+  // pinMode(IR_SENSOR_M_PIN, INPUT); // пин датчика ИК - А2
+
+
+  enc1.setup(6, 7);
+  enc2.setup(8, 9);
+  enc1.reverse();
+  enc2.reverse();
+ // Serial.begin(9600);
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("123");
+
+
+
+  //   initServo();
+  // #if DEBUG
+  //  debug_init();
+  // #else
+  //   logInit();
+  // #endif
+
+  //start();
+}
+
+
+
+
+
+
+
+
+
+
+
+#include <LiquidCrystal_I2C.h>
+#include <Wire.h>
+#include <arduino_encoder.h>
+#include <PinChangeInterrupt.h>
+#include <PinChangeInterruptBoards.h>
+#include <PinChangeInterruptPins.h>
+#include <PinChangeInterruptSettings.h>
+
+
+
+#define BASE_SPEED 150
+#define SENSOR_1 14
+#define SENSOR_2 15
+#define LMN 2
+#define RMN 4
+#define LMS 3
+#define RMS 5
+Encoder enc1;
+Encoder enc2;
+
+
+
+
+
+void setup()
+{
+  for (int i = 2; i <= 5; i++)
+    pinMode(i, OUTPUT);
+  enc1.setup(6, 7);
+  enc2.setup(8, 9);
+  enc1.reverse();
+  enc2.reverse();
+  Serial.begin(9600);
+}
+
+
+
+
+
+
+void encpid(int K, int V, int N)
+{
+  int error = enc1.get() - enc2.get();
+  Serial.print(enc1.get());
+  Serial.print("\t");
+  Serial.println(enc2.get());
+  int uprvozd = K * error;
+  go(constrain(V + uprvozd, -250, 255), constrain(V - uprvozd, -250, 255));
+  if (enc1.get() >= N || enc2.get() >= N)
+  {
+    go(0, 0);
+    delay(2000);
+    enc1.clear();
+    enc2.clear();
+  }
+}
+
+void encleft(int K, int V, int N)
+{
+  int error = abs(enc1.get()) - abs(enc2.get());
+  int uprvozd = K * error;
+  go(constrain(V - uprvozd, -250, 255), -constrain(V + uprvozd, -250, 255));
+  if (abs(enc1.get()) >= N || abs(enc2.get()) >= N)
+  {
+    go(0, 0);
+    delay(2000);
+    enc1.clear();
+    enc2.clear();
+  }
+  else
+    pid(BASE_SPEED, 0.3);
+}
+
+
+
+
+void ulica(int T) {
+  if (analogRead(A0)<500 && analogRead(A1)<500)
+  {
+    ensPidN(V,K,N);
+    N++;
+    if(T==N) {N=0; Step++;}
+  }
+  else pid(BASE_SPEED,0.3);
+} 
+
+
+void pid(int speed, float K)
+{
+  float p_gain = (speed == 0) ? K * gainCoeff : KOEF_ERROR;
+
+  int E = currentError();
+
+  int M1 = speed + E * p_gain;
+  M1 = constrain(M1, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
+  int M2 = speed - E * p_gain;
+  M2 = constrain(M2, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
+
+  // Отладочное сообщение (можно закомментировать при финальной сборке)
+  // Serial.print("p_gain: "); Serial.print(p_gain); Serial.print(" E: "); Serial.println(E);
+  // Serial.print("M1: "); Serial.print(M1); Serial.print(" M2: "); Serial.println(M2);
+  
+  go(M1, M2,0,false);
+
+}
+
+
+void loop(){
+//encpid(5, BASE_SPEED, 1330 * 2);
+}
