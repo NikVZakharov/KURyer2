@@ -115,7 +115,7 @@ void setup()
   // start();
 }
 
-void loop()
+/*void ulica(int n)
 {
 
 //go(-baseSpeed,baseSpeed);
