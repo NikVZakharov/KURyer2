@@ -4,11 +4,12 @@
 #include <UZD.h>
 #include <header.h>
 #include <servoMotor.h>
+#include <LCD.h>
 
 int testUZDF()
 {
     int result=uzdF();
-    Serial.println(result);
+    LCDprint(0, 0, result);
     return result;
 }
 
@@ -61,7 +62,7 @@ void test()
 
      testUZDF(); // тест переднего УЗ датчика
 
-       //testServo(); //тест сервопривода
+     //  testServo(); //тест сервопривода
        //testIsOnBlack();
       // testIsOnCross();
    // testFullTurn();

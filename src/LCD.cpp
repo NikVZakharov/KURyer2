@@ -17,14 +17,14 @@ void lcdclear(){
 }
 
 void LCDprint(int x, int y, float number){
-
+  lcd.clear();
    startTime = millis();                            // Считываем текущее время
       while (millis() - startTime < timeToShowLED) // Пока текущее время - время старта таймера меньше интервала выравнивания едем по preg()
      {
-      lcd.setCursor(y, x);      
-      lcd.print(number);
+    lcd.setCursor(y, x);      
+    lcd.print(number);
      }
-//delay(50);
-lcdclear();
+  //delay(50);
+
 }
 

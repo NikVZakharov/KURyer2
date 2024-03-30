@@ -23,21 +23,22 @@
 
 #endif
 
-const int UZF_TRIGGER_PIN = 8;
-const int UZF_ECHO_PIN = 9;
-// Устанавливаем номера пинов для датчиков линии
+
+
 const int IR_SENSOR_L_PIN = A0;
 const int IR_SENSOR_R_PIN = A1;
-const int IR_SENSOR_M_PIN = A2;
-const int MOTOR_L_DIRECTION_PIN = 4;
-const int MOTOR_L_SPEED_PIN = 5;
+const int SERVO_PIN = A3;
+const int UZF_ECHO_PIN = 8;
+const int UZF_TRIGGER_PIN = 9;
+
 const int MOTOR_R_DIRECTION_PIN =2;
 const int MOTOR_R_SPEED_PIN = 3;
-const int SERVO_PIN = 13;
+const int MOTOR_L_DIRECTION_PIN = 4;
+const int MOTOR_L_SPEED_PIN = 5;
 const int MOTOR_L_ENCODER_PIN1=6 ;
 const int MOTOR_L_ENCODER_PIN2=7 ;
-const int MOTOR_R_ENCODER_PIN1=8 ;
-const int MOTOR_R_ENCODER_PIN2=9; 
+const int MOTOR_R_ENCODER_PIN1=17 ;
+const int MOTOR_R_ENCODER_PIN2=18; 
 
 const float KOEFF_FIX_MOTOR_L_SPEED = 0.8;
 const bool FIXPOSITION = true; // выравниваемся на повороте или нет
@@ -95,13 +96,11 @@ void setup()
   pinMode(MOTOR_L_SPEED_PIN, OUTPUT);     // скор. мотора лев.
   pinMode(MOTOR_R_DIRECTION_PIN, OUTPUT); // напр. мотора прав.
   pinMode(MOTOR_R_SPEED_PIN, OUTPUT);     // скор. мотора прав.
-  //  pinMode(7, OUTPUT); // пинок дальномера uzdL - левого
-  // pinMode(UZF_TRIGGER_PIN, OUTPUT); // пинок дальномера uzdF - фронтального
-  // // pinMode(8, INPUT);  // эхо-прием дальномера uzdL - левого
-  // pinMode(UZF_ECHO_PIN, INPUT);    // эхо-прием дальномера uzdF - фронтального
+  pinMode(UZF_TRIGGER_PIN, OUTPUT); // пинок дальномера uzdF - фронтального
+  pinMode(UZF_ECHO_PIN, INPUT);    // эхо-прием дальномера uzdF - фронтального
   pinMode(IR_SENSOR_L_PIN, INPUT); // пин датчика ИК - А0
   pinMode(IR_SENSOR_R_PIN, INPUT); // пин датчика ИК - А1
-  // pinMode(IR_SENSOR_M_PIN, INPUT); // пин датчика ИК - А2
+  pinMode(SERVO_PIN, OUTPUT);     // серво привод
 
   initLCD();
   initENC();
@@ -115,16 +114,17 @@ void setup()
   // start();
 }
 
-/*void ulica(int n)
+void loop()
 {
-
+ //##### Тесты Начало ######
+ 
+  test();
 //go(-baseSpeed,baseSpeed);
  //preg(baseSpeed);
-  encpid(baseSpeed,koef_preg_p);
-  
-// Serial.println(IR_SENSOR_L_PIN);
-// Serial.println(" ");
-// Serial.println(IR_SENSOR_R_PIN);
+ // encpid(baseSpeed,koef_preg_p);
+ 
+  //##### Тесты Конец ###### 
+
 
 //   if (isOnCross())
 //   {
