@@ -1,11 +1,11 @@
-#define DEBUG 0
+
 #include <Arduino.h>
 #include <drive.h>
 #include <middleware.h>
 #include <UZD.h>
 #include <header.h>
 
-#if !DEBUG
+
 void logInit()
 {
     Serial.begin(9600); // Only using Serial when not debugging!
@@ -43,4 +43,3 @@ void consoleLog(int interval)
     
     delay(interval);
 }
-#endif

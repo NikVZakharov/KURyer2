@@ -42,6 +42,7 @@ extern int maxErrorTurnFix;
 extern int obezdDelay;
 extern int finishDelay;
 extern int povorotDelay;
+extern int povorotDelay2;
 extern int obezdObjectDelay;
 extern int distanceToCheckObject;
 extern int whiteEdgeLimit;

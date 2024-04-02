@@ -48,10 +48,9 @@ void MoveObject90grad()
 
   moveToTakeObjectOnBlack();
   right();
-  right();
-  right();
   moveToPutObjectOnBlack();
-  left();
+  right();
+  right();
 }
 
 void M_sensor()

@@ -21,25 +21,19 @@ void testServo()
 }
 
 void testIsOnBlack(){
-    Serial.print(isOnBlack(IR_SENSOR_L_PIN));
-    Serial.print(" ");
-    Serial.print(isOnBlack(IR_SENSOR_M_PIN));
-    Serial.print(" ");
-    Serial.println(isOnBlack(IR_SENSOR_R_PIN));
+    LCDprint(0, 0, isOnBlack(IR_SENSOR_L_PIN));
+    LCDprint(1, 0, isOnBlack(IR_SENSOR_R_PIN));
     delay(baseDelay);
 }
 
 void testIRSensors(){
-    Serial.print(analogRead(IR_SENSOR_L_PIN));
-    Serial.print(" ");
-     Serial.print(analogRead(IR_SENSOR_M_PIN));
-     Serial.print(" ");
-    Serial.println(analogRead(IR_SENSOR_R_PIN));
+    LCDprint(0, 0, analogRead(IR_SENSOR_L_PIN));
+    LCDprint(1, 0, analogRead(IR_SENSOR_R_PIN));
     delay(baseDelay);
 }
 
 void testIsOnCross(){
-    Serial.println(isOnCross());
+    LCDprint(0, 0, isOnCross()); 
     delay(baseDelay);
 }
 
@@ -55,17 +49,13 @@ void testFullTurn(){
 
 void test()
 {
-//testIRSensors();
-    // go(baseSpeed, baseSpeed); //тест моторов
-
-    //preg(baseSpeed);
-
-     testUZDF(); // тест переднего УЗ датчика
-
-     //  testServo(); //тест сервопривода
-       //testIsOnBlack();
-      // testIsOnCross();
-   // testFullTurn();
-   //testIRSensors();
+ //go(-baseSpeed, baseSpeed); //тест моторов
+preg(baseSpeed);
+// testUZDF(); // тест переднего УЗ датчика
+// testServo(); //тест сервопривода
+// testIsOnBlack();
+// testIsOnCross();
+// testFullTurn();
+// testIRSensors();
 }
 

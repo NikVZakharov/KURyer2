@@ -69,14 +69,6 @@ void encpid(int V, int K ,int N=0)
   // }
 }
 
-
-
-
-
-
-
-
-
 void fixPositionAfterTurn()
 {
   // Выравниваем робота после поворота пока ошибка(разность показаний левого и правого ИК датчика) не будет меньше maxErrorTurnFix
@@ -99,14 +91,14 @@ void fixPositionAfterTurn()
 
 void right()
 {
-  go(baseSpeed, -baseSpeed, 500); // Поворачиваем так, чтобы левый ИК датчик сместился с белого на черную линию
+  go(baseSpeed, -baseSpeed, 400); // Поворачиваем так, чтобы левый ИК датчик сместился с белого на черную линию
   //  go(0, 0, baseDelay);
   while (isOnBlack(IR_SENSOR_L_PIN)) // Поворачиваем пока левый ИК датчик на черной линии
   {
     go(baseSpeed, -baseSpeed);
   }
   // go(0, 0, baseDelay/3);
-  go(baseSpeed, -baseSpeed, 300); // Поворачиваем так, чтобы левый ИК датчик сместился с черной линии на белое поле
+  go(baseSpeed, -baseSpeed, 200); // Поворачиваем так, чтобы левый ИК датчик сместился с черной линии на белое поле
   //  go(0, 0, baseDelay);
   while (!isOnBlack(IR_SENSOR_L_PIN)) // Поворачиваем пока левый ИК датчик на белом поле
   {
@@ -125,14 +117,14 @@ void right()
 
 void left()
 {
-  go(-baseSpeed, baseSpeed, 500); // Поворачиваем так, чтобы правый ИК датчик сместился с белого на черную линию
+  go(-baseSpeed, baseSpeed, povorotDelay); // Поворачиваем так, чтобы правый ИК датчик сместился с белого на черную линию
   //  go(0, 0, baseDelay);
   while (isOnBlack(IR_SENSOR_R_PIN)) // Поворачиваем пока правый ИК датчик на черной линии
   {
     go(-baseSpeed, baseSpeed);
   }
   // go(0, 0, baseDelay/3);
-  go(-baseSpeed, baseSpeed, 300); // Поворачиваем так, чтобы правый ИК датчик сместился с черной линии на белое поле
+  go(-baseSpeed, baseSpeed, povorotDelay2); // Поворачиваем так, чтобы правый ИК датчик сместился с черной линии на белое поле
   //  go(0, 0, baseDelay);
   while (!isOnBlack(IR_SENSOR_R_PIN)) // Поворачиваем пока правый ИК датчик на белом поле
   {
@@ -177,15 +169,13 @@ void finish()
   {
     go(baseSpeed, baseSpeed, finishDelay);
     go(0, 0);
-    while (true)
-    {
-    }
+    while (true);
   }
 }
 void doezd()
 {
   go(baseSpeed, baseSpeed, crossDelay);
-  go(0, 0, baseDelay / 2);
+  go(0, 0, baseDelay );
 }
 
 void driveToObjectOnBlack()
