@@ -2,6 +2,6 @@
 #define log_h
 
 void logInit();
-void consoleLog(int interval);
+void consoleLog(int interval=500);
 
 #endif

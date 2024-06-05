@@ -50,7 +50,7 @@ void MoveObject90grad()
   right();
   moveToPutObjectOnBlack();
   right();
-  right();
+ 
 }
 
 void M_sensor()
@@ -63,16 +63,14 @@ void M_sensor()
 
 void obezdObject()
 {
-  if (uzdF() < distanceToCheckObject)
+  if (getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN,pastUZDFValue) < distanceToCheckObject)
   {
     go(0, 0, baseDelay);
     go(baseSpeed, -baseSpeed, povorotDelay); // поворачиваем влево пока мы на линии с банкой
     go(0, 0, baseDelay);
-    go(baseSpeed, baseSpeed, obezdDelay * 2);      // едем вперед секунду чтобы уйти с линии где банка
-    go(-baseSpeed, baseSpeed, povorotDelay);       // поворачиваем влево
-    go(baseSpeed, baseSpeed, obezdObjectDelay*1.5);    // едем вперед чтобы обехать банку
-    go(-baseSpeed, baseSpeed, povorotDelay /1.6); // поворачиваем влево
-    while (IR_SENSOR_R_PIN > blackLimitPreg)           // едем пока не вернемся на линию
+    go(baseSpeed, baseSpeed, obezdDelay);      // едем вперед секунду чтобы уйти с линии где банка
+    go(-baseSpeed, baseSpeed, povorotDelay*2);       // поворачиваем влево
+    while (IR_SENSOR_R_PIN > blackLimit)           // едем пока не вернемся на линию
     {
       go(baseSpeed, baseSpeed);
     }
@@ -86,13 +84,13 @@ void moveObjectFromCross()
   // doezd();
   left();
 
-  if (uzdF() < distanceToCheckBanka)
+  if (getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN,pastUZDFValue) < distanceToCheckBanka)
   {
     //  moveBankaTake();
     // moveBankaPut();
     right();
     right();
-    while (uzdF() > distanceToTakeBanka)
+    while (getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN,pastUZDFValue) > distanceToTakeBanka)
     {
       preg(baseSpeed);
     }

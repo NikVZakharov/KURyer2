@@ -2,11 +2,7 @@
 // {
 //   // ##### Тесты Начало ######
 
-//   // test();
-//   // go(baseSpeed,baseSpeed, baseDelay*2);
-//   // go(0,0,baseDelay*2);
-//   // preg(baseSpeed);
-//   // encpid(baseSpeed,koef_preg_p);
+//    //test();
 
 //   // ##### Тесты Конец ######
 
@@ -15,6 +11,7 @@
 //   {
 //     doezd();
 //     crossCount++;
+//     finish();
 
 //     if (crossCount == 1)
 //     {
@@ -22,64 +19,39 @@
 //     }
 //     if (crossCount == 2)
 //     {
-//       left();
+//       right();
 //     }
-//     // if (crossCount==4)
-//     //     {
-//     //       doezd();
-//     //     }
-//     if (crossCount == 4)
-//     {
-//       left();
-//     }
-//     if (crossCount == 5)
-//     {
-//       left();
-//       left();
-//     }
-//     // if (crossCount==7)
-//     //   {
-//     //     doezd();
-//     //   }
+  
+//     if (crossCount==6)
+//       {
+//         MoveObject90grad();
+//         //left();
+//         //left();
+//       }
 //     if (crossCount == 7)
 //     {
-//       left();
+//       right();
 //     }
 //     if (crossCount == 8)
 //     {
+//       right();
+//     }
+//     if (crossCount == 10)
+//     {
 //       left();
 //       left();
 //     }
-//     if (crossCount == 9)
+//     if (crossCount == 11)
 //     {
 //       left();
 //     }
-//     //  if (crossCount==12)
-//     //   {
-//     //     doezd();
-//     //   }
-//     //  if (crossCount==13)
-//     //   {
-//     //     doezd();
-//     //   }
 //     if (crossCount == 12)
 //     {
 //       left();
-//     }
-//     if (crossCount == 13)
-//     {
 //       left();
 //     }
-//     // if(crossCount==16)
-//     // {
-//     //   doezd();
-//     // }
-//     if (crossCount == 15)
-//     {
-//       go(baseSpeed, baseSpeed, baseDelay * 2);
-//       go(0, 0);
-//       while (1)
-//         ;
-//     }
+   
+    
+
 //   }
-// }
+//  }

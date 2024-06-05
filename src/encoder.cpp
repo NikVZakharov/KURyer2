@@ -24,14 +24,14 @@ void initENC(){
 
 long getEncoder1(){
 long  value=enc1.get();
-LCDprint(0, 0, value);
+//LCDprint(0, 0, value);
   return value;
   
 }
 
 long getEncoder2(){
 long  value=enc2.get();
-LCDprint(1, 0, value);
+//LCDprint(1, 0, value);
   return value;
   
 }

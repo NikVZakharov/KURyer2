@@ -1,0 +1,56 @@
+// void loop()
+// {
+//   // ##### Тесты Начало ######
+//   // go(baseSpeed, baseSpeed);
+//   // test();
+//   // consoleLog();
+//   // ##### Тесты Конец ######1488
+
+//   preg(baseSpeed);
+//   if (isOnCross())
+//   {
+
+//    doezd();
+//    crossCount++;
+
+//    LCDprint(0, 0, crossCount);
+  
+
+//     if (crossCount == 1)
+//     {
+//       if (uzdS() < distanceToCheckBanka)
+//       {
+//         banka = 1;
+//       }
+//     }
+//     if (crossCount == 2)
+//     {
+//       if (uzdS() < distanceToCheckBanka)
+//       {
+//         banka = 2;
+//       }
+//     }
+//      if (crossCount == 3)
+//     {
+//       if (uzdS() < distanceToCheckBanka)
+//       {
+//         banka = 3;
+//       }
+//     }
+//     if (banka == 1)///////////////////////////////
+//     {
+//       drive1();
+//     }
+//     else if(banka==2)//////////////////////////
+//     {
+//       drive2();
+//     }
+//     else if(banka==3)///////////////////////////////
+//     {
+//       drive3();
+//     }
+
+
+
+//   }
+// }

@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "pinchangeinterruptpins.h": "c"
-    }
+    },
+    "cmake.configureOnOpen": false
 }

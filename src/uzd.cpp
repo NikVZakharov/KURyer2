@@ -1,19 +1,24 @@
 #include <Arduino.h>
 #include <header.h>
-int uzdF() {
-  digitalWrite(UZF_TRIGGER_PIN, 0);
+
+
+float uzd(int trigerPin, int echoPin,float& pastValue) {
+  digitalWrite(trigerPin, 0);
   delayMicroseconds(2);
-  digitalWrite(UZF_TRIGGER_PIN, 1);
+  digitalWrite(trigerPin, 1);
   delayMicroseconds(10);
-  digitalWrite(UZF_TRIGGER_PIN, 0);
-  return 0.01723 * pulseIn(UZF_ECHO_PIN, 1);
+  digitalWrite(trigerPin, 0);
+  
+  float s= 0.01723 * pulseIn(echoPin, 1);
+  float u=s*0.3+pastValue*0.7;
+  pastValue=s;
+  return u;
 }
 
-int uzdL() {
-  digitalWrite(7, 0);
-  delayMicroseconds(2);
-  digitalWrite(7, 1);
-  delayMicroseconds(10);
-  digitalWrite(7, 0);
-  return 0.01723 * pulseIn(8, 1);
+float getDistance(int trigerPin, int echoPin,float& pastValue) {
+  return uzd( trigerPin,  echoPin, pastValue);
+
 }
+
+
+
