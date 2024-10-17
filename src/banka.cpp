@@ -63,7 +63,7 @@ void M_sensor()
 
 void obezdObject()
 {
-  if (getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN,pastUZDFValue) < distanceToCheckObject)
+  if (getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN) < distanceToCheckObject)
   {
     go(0, 0, baseDelay);
     go(baseSpeed, -baseSpeed, povorotDelay); // поворачиваем влево пока мы на линии с банкой
@@ -84,13 +84,13 @@ void moveObjectFromCross()
   // doezd();
   left();
 
-  if (getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN,pastUZDFValue) < distanceToCheckBanka)
+  if (getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN) < distanceToCheckBanka)
   {
     //  moveBankaTake();
     // moveBankaPut();
     right();
     right();
-    while (getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN,pastUZDFValue) > distanceToTakeBanka)
+    while (getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN) > distanceToTakeBanka)
     {
       preg(baseSpeed);
     }

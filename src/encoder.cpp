@@ -47,3 +47,9 @@ void clearEncoder2(){
    enc2.clear();
   
 }
+
+void clearAllEncoders(){
+
+  clearEncoder1();
+  clearEncoder2();
+}

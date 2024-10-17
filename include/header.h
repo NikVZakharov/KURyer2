@@ -23,6 +23,10 @@ extern const bool IS_IR_SENSORS_REVERS;
 extern const float KOEFF_FIX_MOTOR_L_SPEED;
 extern const bool FIXPOSITION;
 extern const int MAX_MOTOR_SPEED;
+extern const int meanArraySize;
+extern const float MAX_INTEGRAL;
+extern const int START_WIDTH;
+extern const int CROSS_WIDTH;
 
 extern int baseSpeed;
 extern int minIRL, minIRR, maxIRL, maxIRR;
@@ -58,14 +62,17 @@ extern int testTime;
 extern int otezdDelay;
 extern int banka;
 extern int walldistance;
-extern float pastUZDFValue;
-extern float pastUZDSValue;
+extern float pastUZDFValue[];
+extern float pastUZDSValue[];
 extern bool maze;
-extern int Ei;
+extern bool driveForward;
+extern float Ei;
 extern float Kp;  // пропорциональный
 extern float Ki;   // интегральный
 extern float Kd; // диференциальный
-extern int Ep;
+extern float Ep;
 extern int wallDistance ;
+
+
 
 #endif

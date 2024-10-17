@@ -17,8 +17,8 @@ void testEncoders()
 void testUZD()
 {
 
-    int result_f = getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN,pastUZDFValue);
-    int result_s = getDistance(UZS_TRIGGER_PIN,UZS_ECHO_PIN,pastUZDSValue);
+    int result_f = getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN);
+    int result_s = getDistance(UZS_TRIGGER_PIN,UZS_ECHO_PIN);
     LCDprint(0, 0, result_f);
     LCDprint(1, 0, result_s);
 
@@ -45,8 +45,10 @@ void testIRSensors()
 {
     int result_1 = getIRSensorValue(IR_SENSOR_L_PIN);
     int result_2 = getIRSensorValue(IR_SENSOR_R_PIN);
-    LCDprint(0, 0, result_1);
-    LCDprint(1, 0, result_2);
+    // LCDprint(0, 0, result_1);
+    // LCDprint(1, 0, result_2);
+    
+
 //    delay(baseDelay);
 }
 void testIRSensorsAnalogRead()
@@ -92,13 +94,13 @@ void test()
     // go(0, 0);
     // lcdclear();
 
-    // // ########### 3 ИК сенсоры  #####################
-    // LCDprint(0, 15, 3);
-    // startTime = millis();
-    // while (millis() - startTime < testTime)
-    // {
-    //     testIRSensors();
-    // }
+    // ########### 3 ИК сенсоры  #####################
+    //LCDprint(0, 15, 3);
+    startTime = millis();
+    while (millis() - startTime < testTime)
+    {
+        testIRSensors();
+    }
     // lcdclear();
 
 //     //########### 4 сервопривод  #####################
@@ -135,13 +137,13 @@ void test()
 //         }
 //         lcdclear();
  //   ########### Энкодеры  #####################
-    LCDprint(0, 15, 8);
-    startTime = millis();
-    while (millis() - startTime < testTime)
-    {
-        testEncoders();
-    }
-    lcdclear();
+    // LCDprint(0, 15, 8);
+    // startTime = millis();
+    // while (millis() - startTime < testTime)
+    // {
+    //     testEncoders();
+    // }
+    // lcdclear();
 
 
   //   preg(baseSpeed);

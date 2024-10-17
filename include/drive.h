@@ -16,10 +16,12 @@ void turnGCross();
 void MoveBankaCross();
 void encpid(int V, int K ,int N=0);
 void stop();
-void pid(int speed, int distance=0);
-void pidEnc(int baseSpeed,float k);
+void pid(int speed);
 void turnEnc(int speed, int angle);
-void pidEncSomeTime(unsigned long timeToMove);
+void driveSomeDistance(int distance);
+void whitePreg(int speed);
+void pidEnc(int Speed,float k);
+
 
 void drive2();
 void drive3();

@@ -18,7 +18,7 @@ void consoleLog(int interval=500)
     //     Serial.println(uzdF());
 
     // //     // значения левого и правого ИК датчика
-    // Serial.print(analogRead(IR_SENSOR_L_PIN));
+    // Serial.println(analogRead(IR_SENSOR_L_PIN));
     // Serial.print(" ");
     // Serial.print(analogRead(IR_SENSOR_R_PIN));
     // Serial.print(" ");
@@ -42,9 +42,9 @@ void consoleLog(int interval=500)
     // Serial.println(" ");
 
      //   ########### Энкодеры  #####################
-    Serial.print(getEncoder1());
-    Serial.print("  ");
-    Serial.println(getEncoder2());
+    // Serial.print(getEncoder1());
+    // Serial.print("  ");
+    // Serial.println(getEncoder2());
 
         
     //Serial.println(isOnCross());

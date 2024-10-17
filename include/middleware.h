@@ -8,7 +8,10 @@ bool isOnBlack(int sensor);
 bool checkBanka();
 int getIRError();
 int getWallError();
-int getError(int distance);
+int getError();
 int getEncoderError();
+float getMedianWithSort(const float *arr, int size);
+float getMedianValue( float currentValue, float *pastValues);
+void crossCalc();
 
 #endif

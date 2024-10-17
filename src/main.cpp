@@ -23,16 +23,17 @@ const int MOTOR_R_DIRECTION_PIN = 4;
 const int MOTOR_R_SPEED_PIN = 5;
 const int UZS_TRIGGER_PIN = 6;
 const int UZS_ECHO_PIN = 7;
-const int UZF_TRIGGER_PIN = 12;
-const int UZF_ECHO_PIN = 13;
-const int MOTOR_R_ENCODER_PIN1 = 8;
-const int MOTOR_R_ENCODER_PIN2 = 9;
-const int MOTOR_L_ENCODER_PIN1 = 10;
-const int MOTOR_L_ENCODER_PIN2 = 11;
+const int UZF_TRIGGER_PIN = A3;
+const int UZF_ECHO_PIN = A2;
+const int MOTOR_L_ENCODER_PIN1 = 8;
+const int MOTOR_L_ENCODER_PIN2 = 9;
+const int MOTOR_R_ENCODER_PIN1 = 10;
+const int MOTOR_R_ENCODER_PIN2 = 11;
 const int IR_SENSOR_L_PIN = A0;
 const int IR_SENSOR_R_PIN = A1;
 const int IR_SENSOR_M_PIN = A7;
-const int SERVO_PIN = A3;
+const int SERVO_PIN = A6;
+
 // ################### Настройки программы ############
 
 const bool IS_IR_SENSORS_REVERS = false;
@@ -40,38 +41,43 @@ const bool IS_IR_SENSORS_REVERS = false;
 // const float KOEFF_FIX_MOTOR_L_SPEED = 0.8;
 // const bool FIXPOSITION = true; // выравниваемся на повороте или нет
 const int MAX_MOTOR_SPEED = 250;
+const int meanArraySize=5; //размер массива усреднения
+const float MAX_INTEGRAL = 100; // Максимальное значение интегральной составляющей для защиты от wind-up
+const int CROSS_WIDTH=200; //ширина линии перекрестка
+const int START_WIDTH=1000;//длина старта
+
 
 // ############## Переменные ####################
 
 // Базовые параметры
-int baseSpeed = 100; // базовая скорость
+int baseSpeed = 200; // базовая скорость
 int minIRL = 200, minIRR = 200, maxIRL = 800, maxIRR = 800;
 int baseDelay = 500;         // задержка между действиями
 unsigned long startTime = 0; // Время начала таймера
 int finishDelay = 600;       // задержка при финишировании
 int timeToShowLED = 10;      // время вывода информации на lcd дисплей
 int testTime = 1000;         // время для тестирования функции
-int blackLimit = 700; //   все что ниже-черная линия 
+int blackLimit = 600; //   все что ниже-черная линия 
 
 // UZD
-float pastUZDFValue; // предыдущее значение переднего датчика 
-float pastUZDSValue; // предыдущее значение бокового датчика
+
+float pastUZDFValue[meanArraySize]  = {0}; // предыдущее значение переднего датчика 
+float pastUZDSValue[meanArraySize]  = {0}; // предыдущее значение бокового датчика
 
 // П регулятор
 float koef_preg_p = 0.5;  // уменьшаем или увеличиваем ошибку чтобы не колбасило робота
 int gainCoeff = 300;      // Коэффициент усиления П регулятора при выравнивании после поворота
 
-int walldistance = 8;     // расстояние до стены
-bool maze = true;         // едем в лабиринте
+int walldistance = 9;     // расстояние до стены
+bool maze=false;         // едем в лабиринте
+bool driveForward = true;         // едем определенное расстояние
 
-int Ei = 0;
-
+float Ei = 0;
+float Ep;
 
 float Kp; // пропорциональный
 float Ki; // интегральный
 float Kd; // диференциальный
-int Ep;
-int wallDistance = 15; // расстояние до стены
 
 // Сервопривод
 int servoOpenPosition = 30;   // градус открытого серво
@@ -136,22 +142,54 @@ void setup()
   initServo();
   logInit();
   // start();
+  driveForward = false;
 }
 
 void loop()
 {
   // ##### Тесты Начало ######
-  //go(baseSpeed, -baseSpeed);
-   //test();
-  // consoleLog();
+  //go(-baseSpeed, -baseSpeed);
+  //test();
+  //consoleLog();
+  
   // ##### Тесты Конец ######1488
 
-
-// pidEncSomeTime(4000);
-// stop();
-// delay(1000);
-turnEnc(100,90);
-
+ // pid(baseSpeed);
+//   Serial.print(isOnBlack(IR_SENSOR_L_PIN));
+//   Serial.print(" ");
+//     Serial.print(isOnBlack(IR_SENSOR_R_PIN));
+// Serial.print(" ");
+//     Serial.print(getIRSensorValue(IR_SENSOR_L_PIN));
+//     Serial.print(" ");
+//     Serial.println(getIRSensorValue(IR_SENSOR_R_PIN));
+    
+  // if (isOnCross())
+  // {
+    
+    
+    
+  //   if (crossCount<4)
+  //   {
+  //     doezd();
+  //     doezd();
+  //    right();
+  //     if (uzd(UZF_TRIGGER_PIN, UZF_ECHO_PIN)<50)
+  //     {
+  //       moveToTakeObjectOnBlack();
+  //       left();
+  //       left();
+  //       moveToPutObjectOnBlack();
+  //       right();
+  //     }
+      
+  //  }
+    
+  // }
+  
+closeServo();
+delay(1000);
+openServo();
+delay(1000);
 
 
 }

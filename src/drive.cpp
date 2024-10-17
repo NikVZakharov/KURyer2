@@ -44,46 +44,75 @@ void preg(int speed)
   go(M1, M2, 0);
 }
 
-// float k = 0.5;
-// void WhitePreg(int speed)
-// {
+void whitePreg(int speed)
+{
+  // float p_gain = (speed == 0) ? KOEF_ERROR * gainCoeff : KOEF_ERROR;
 
-//   int E = analogRead(A0) - analogRead(A1);
-//   int uprvozd = E * k;
+  int E = getIRError(); /**/
 
-//   int M1 = speed - uprvozd;
-//   M1 = constrain(M1, -250, 250);
-//   int M2 = speed + uprvozd;
-//   M2 = constrain(M2, -250, 250);
+  int uprvozd = E * koef_preg_p;
 
-//   go(M1, M2);
-// }
+  int M1 = speed - uprvozd;
+  M1 = constrain(M1, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
+  int M2 = speed + uprvozd;
+  M2 = constrain(M2, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
 
-void pid(int speed, int distance = 10)
+  //   LCDprint(0, 0, M1);
+  //   LCDprint(1, 0, M2);
+  //   LCDprint(1, 8, E);
+  //   LCDprint(1, 8, uprvozd);
+  //   delay(500);
+  // lcdclear();
+
+  go(M1, M2, 0);
+}
+
+void pid(int speed)
 {
 
-  if (maze == true)
+  if (maze==true) // коэффициенты для езды в лабиринте
   {
-    Kp = 10; // пропорциональный
-    Ki = 0;  // интегральный
-    Kd = 10; // диференциальный
+    Kp = 3;    // пропорциональный
+    Ki = 0.0; // интегральный
+    Kd = 1;    // диференциальный
   }
   else
   {
-    Kp = 0.6; // пропорциональный
-    Ki = 0;   // интегральный
-    Kd = 0;   // диференциальный
+    if (driveForward) // коэффициенты для езды по прамой
+    {
+      Kp = 1; // пропорциональный
+      Ki = 0; // интегральный
+      Kd = 0; // диференциальный
+    }
+    else // коэффициенты для езды по черной и белой линии
+    {
+      Kp = 0.6; // пропорциональный
+      Ki = 0;   // интегральный
+      Kd = 0;   // диференциальный
+    }
   }
 
-  Ep = getError(distance);
+  Ep = getError();
 
-  int Ed = Ep - Ei;
-  int U = Ep * Kp + Ei * Ki + Ed * Kd;
+  float Ed = Ep - Ei;
+  Ei = Ei * 0.7 + Ep * 0.3;
 
-  // if (isOnBlack(IR_SENSOR_M_PIN))
-  // {
-  //   U = -U;
+  //   Ei = Ei + Ep;
+  // if (Ei > MAX_INTEGRAL) {
+  //   Ei = MAX_INTEGRAL;
+  // } else if (Ei < -MAX_INTEGRAL) {
+  //   Ei = -MAX_INTEGRAL;
   // }
+
+  float U = Ep * Kp + Ei * Ki + Ed * Kd;
+  //  Serial.print(" ");
+  //  Serial.print(Ep);
+  //  Serial.print(" ");
+  //  Serial.print(Ei);   
+  //  Serial.print(" ");
+  //  Serial.print(Ed);
+  //  Serial.print(" ");
+  //  Serial.println(U);
 
   int M1 = speed + U;
   M1 = constrain(M1, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
@@ -91,42 +120,36 @@ void pid(int speed, int distance = 10)
   M2 = constrain(M2, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
 
   go(M1, M2);
-
-  Ei = Ei * 0.7 + Ep * 0.3;
 }
 
-void pidEnc(int baseSpeed, float k)
-{
-  int E = abs(getEncoder1()) - abs(getEncoder2());
-  float M1 = baseSpeed + E * k;
-  M1 = constrain(M1, -250, 250);
-  float M2 = baseSpeed - E * k;
-  M2 = constrain(M2, -250, 250);
+void pidEnc(int Speed,float k){
+int E=abs(getEncoder2())-abs(getEncoder1());
+float M1=Speed+E*k; M1=constrain(M1,-250,250);
+float M2=Speed-E*k; M2=constrain(M2,-250,250);
 
-  go(M1, M2);
-  if (getEncoder1() > 1000 || getEncoder2() > 1000)
-  {
-    clearEncoder1();
-    clearEncoder2();
-  }
+go(M1,M2);
+if(abs(getEncoder1())>1000 || abs(getEncoder2())>1000) {clearEncoder1();clearEncoder2();}
 }
 
-void pidEncSomeTime(unsigned long timeToMove)
+void driveSomeDistance(int distance)
 {
-  startTime = millis();                     // Считываем текущее время
-  while (millis() - startTime < timeToMove) // Пока текущее время - время старта таймера меньше заданного интервала едем по preg()
+  driveForward = true;
+  clearAllEncoders();
+  while (abs(getEncoder1()) < distance && abs(getEncoder2()) < distance) // Пока текущее время - время старта таймера меньше заданного интервала едем по preg()
   {
-    pidEnc(baseSpeed, 2);
+    pid(baseSpeed);
   }
+  clearAllEncoders();
   go(0, 0);
+  driveForward = false;
 }
 
 void turnEnc(int speed, int angle)
 {
   int direction;
-  Kp = 2; // пропорциональный
+  Kp = 0.2; // пропорциональный
 
-  int A = map(abs(angle), 0, 360, 0, 6200);
+  int A = map(abs(angle), 0, 360, 0, 6000);
 
   if (angle > 0)
     direction = 1; // лево
@@ -135,45 +158,88 @@ void turnEnc(int speed, int angle)
 
   while (abs(getEncoder1()) < A || abs(getEncoder2()) < A)
   {
-    int E = getEncoderError();
-    float M1 = direction * (speed - E * Kp);
-    M1 = constrain(M1, -250, 250);
-    float M2 = -direction * (speed + E * Kp);
-    M2 = constrain(M2, -250, 250);
+    float E = getEncoderError();
+
+    // Serial.print(" ");    
+    // Serial.println(E);
+
+    float U = E * Kp; 
+    
+    int M1 = direction * (speed + U);
+    M1 =  constrain(M1, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
+    int M2 = -direction * (speed - U);
+    M2 = constrain(M2, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
 
     go(M1, M2);
   }
-  clearEncoder1();
-  clearEncoder2();
+  clearAllEncoders();
   go(0, 0);
-  delay(1000);
 }
 
-void encpid(int V, int K, int N = 0)
+
+
+void start()
 {
-  int E = getEncoder1() - getEncoder2();
-
-  int uprvozd = K * E;
-
-  int M1 = V + uprvozd;
-  M1 = constrain(M1, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
-  int M2 = V - uprvozd;
-  M2 = constrain(M2, -MAX_MOTOR_SPEED, MAX_MOTOR_SPEED);
-  go(M1, M2, 0);
-
-  // LCDprint(0, 0, M1);
-  // LCDprint(1, 0, M2);
-  // LCDprint(1, 8, E);
-  // LCDprint(1, 8, uprvozd);
-
-  // if ((getEncoder1() >= N || getEncoder2() >= N) && N>0)
-  // {
-  //   go(0, 0);
-  //   delay(2000);
-  //   clearEncoder1();
-  //   clearEncoder2();
-  // }
+  // Едем вперед пока не увидим поперечную черную линию
+  driveSomeDistance(START_WIDTH);  
+  go(0, 0);
+ 
 }
+
+void finish()
+{
+  // if (crossCount == FINISH_CROSS_COUNT)
+  //{
+  go(baseSpeed, baseSpeed, finishDelay);
+  go(0, 0);
+  while (true)
+    ;
+  //}
+}
+void doezd()
+{
+  driveSomeDistance(CROSS_WIDTH);  
+  go(0, 0);
+}
+
+void stop()
+{
+  for (int i = 0; i < 40; i++)
+  {
+    go(baseSpeed, baseSpeed, 1);
+    go(-baseSpeed, -baseSpeed, 1);
+  }
+  go(0, 0);
+}
+
+void driveToObjectOnBlack()
+{
+  while (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN) > distanceToTakeBanka) // едем вперед на preg() пока расстояние до банки не будет меньше  distanceToTakeBanka
+  {
+    preg(baseSpeed);
+    // go(baseSpeed, baseSpeed);
+  }
+}
+
+// едем назад пока не увидим черную линию
+void driveBackToCross()
+{
+  while (!isOnCross())
+  {
+    go(-baseSpeed, -baseSpeed);
+  }
+}
+
+void pregSomeTime(unsigned long timeToMove)
+{
+  startTime = millis();                     // Считываем текущее время
+  while (millis() - startTime < timeToMove) // Пока текущее время - время старта таймера меньше заданного интервала едем по preg()
+  {
+    preg(baseSpeed);
+  }
+  go(0, 0);
+}
+
 
 void fixPositionAfterTurn()
 {
@@ -197,18 +263,18 @@ void fixPositionAfterTurn()
 
 void right()
 {
-  go(baseSpeed, -baseSpeed, 400); // Поворачиваем так, чтобы левый ИК датчик сместился с белого на черную линию
+  go(-baseSpeed, baseSpeed, 400); // Поворачиваем так, чтобы левый ИК датчик сместился с белого на черную линию
   //  go(0, 0, baseDelay);
   while (isOnBlack(IR_SENSOR_L_PIN)) // Поворачиваем пока левый ИК датчик на черной линии
   {
-    go(baseSpeed, -baseSpeed);
+    go(-baseSpeed, baseSpeed);
   }
   // go(0, 0, baseDelay/3);
-  go(baseSpeed, -baseSpeed, 200); // Поворачиваем так, чтобы левый ИК датчик сместился с черной линии на белое поле
+  go(-baseSpeed, baseSpeed, 200); // Поворачиваем так, чтобы левый ИК датчик сместился с черной линии на белое поле
   //  go(0, 0, baseDelay);
   while (!isOnBlack(IR_SENSOR_L_PIN)) // Поворачиваем пока левый ИК датчик на белом поле
   {
-    go(baseSpeed, -baseSpeed);
+    go(-baseSpeed, baseSpeed);
     // if (checkBanka()) // Если увидели банку останавливаем поворот
     // {
     //   go(0, 0, baseDelay);
@@ -223,18 +289,18 @@ void right()
 
 void left()
 {
-  go(-baseSpeed, baseSpeed, povorotDelay); // Поворачиваем так, чтобы правый ИК датчик сместился с белого на черную линию
+  go(baseSpeed, -baseSpeed, povorotDelay); // Поворачиваем так, чтобы правый ИК датчик сместился с белого на черную линию
   //  go(0, 0, baseDelay);
   while (isOnBlack(IR_SENSOR_R_PIN)) // Поворачиваем пока правый ИК датчик на черной линии
   {
-    go(-baseSpeed, baseSpeed);
+    go(baseSpeed, -baseSpeed);
   }
   // go(0, 0, baseDelay/3);
-  go(-baseSpeed, baseSpeed, povorotDelay2); // Поворачиваем так, чтобы правый ИК датчик сместился с черной линии на белое поле
+  go(baseSpeed, -baseSpeed, povorotDelay2); // Поворачиваем так, чтобы правый ИК датчик сместился с черной линии на белое поле
   //  go(0, 0, baseDelay);
   while (!isOnBlack(IR_SENSOR_R_PIN)) // Поворачиваем пока правый ИК датчик на белом поле
   {
-    go(-baseSpeed, baseSpeed);
+    go(baseSpeed, -baseSpeed);
     // if (checkBanka()) // Если увидели банку останавливаем поворот
     // {
     //   go(0, 0, baseDelay);
@@ -245,71 +311,6 @@ void left()
   // fixPositionAfterTurn();
 
   go(0, 0);
-}
-
-void pregSomeTime(unsigned long timeToMove)
-{
-  startTime = millis();                     // Считываем текущее время
-  while (millis() - startTime < timeToMove) // Пока текущее время - время старта таймера меньше заданного интервала едем по preg()
-  {
-    preg(baseSpeed);
-  }
-  go(0, 0);
-}
-
-void start()
-{
-  // Едем вперед пока не увидим поперечную черную линию
-  while (!isOnCross())
-  {
-    go(baseSpeed, baseSpeed);
-  }
-  go(baseSpeed, baseSpeed, crossDelay); // проезжаем поперечную черную линию пока черная линия трассы не окажется между датчиками
-  go(0, 0);
-}
-
-void finish()
-{
-  // if (crossCount == FINISH_CROSS_COUNT)
-  //{
-  go(baseSpeed, baseSpeed, finishDelay);
-  go(0, 0);
-  while (true)
-    ;
-  //}
-}
-// void doezd()
-// {
-//   go(baseSpeed, baseSpeed, crossDelay);
-//   go(0, 0, baseDelay/2);
-// }
-
-void stop()
-{
-  for (int i = 0; i < 40; i++)
-  {
-    go(baseSpeed, baseSpeed, 1);
-    go(-baseSpeed, -baseSpeed, 1);
-  }
-  go(0, 0);
-}
-
-void driveToObjectOnBlack()
-{
-  while (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN, pastUZDFValue) > distanceToTakeBanka) // едем вперед на preg() пока расстояние до банки не будет меньше  distanceToTakeBanka
-  {
-    preg(baseSpeed);
-    // go(baseSpeed, baseSpeed);
-  }
-}
-
-// едем назад пока не увидим черную линию
-void driveBackToCross()
-{
-  while (!isOnCross())
-  {
-    go(-baseSpeed, -baseSpeed);
-  }
 }
 
 void turnGCross()
@@ -332,9 +333,9 @@ void turnGCross()
 void MoveBankaCross()
 {
   left();
-  if (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN, pastUZDFValue) < distanceToCheckBanka)
+  if (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN) < distanceToCheckBanka)
   {
-    while (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN, pastUZDFValue) > distanceToTakeBanka)
+    while (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN) > distanceToTakeBanka)
     {
       preg(baseSpeed);
     }
@@ -362,9 +363,9 @@ void MoveBankaCross()
   else
   {
     right();
-    if (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN, pastUZDFValue) < distanceToCheckBanka)
+    if (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN) < distanceToCheckBanka)
     {
-      while (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN, pastUZDFValue) > distanceToTakeBanka)
+      while (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN) > distanceToTakeBanka)
       {
         preg(baseSpeed);
       }
@@ -392,215 +393,215 @@ void MoveBankaCross()
   }
 }
 
-void drive1()
-{
-  if (crossCount == 4)
-  {
-    right();
-  }
-  if (crossCount == 5)
-  {
-    right();
-  }
-  if (crossCount == 6)
-  {
-    right();
-  }
-  if (crossCount == 7)
-  {
-    moveToTakeObjectOnBlack();
-    left();
-    left();
-  }
-  if (crossCount == 10)
-  {
-    moveToPutObjectOnBlack();
-    left();
-    left();
-  }
-  if (crossCount == 11)
-  {
-    right();
-  }
-  if (crossCount == 12)
-  {
-    left();
-  }
-  if (crossCount == 13)
-  {
-    right();
-  }
-  if (crossCount == 14)
-  {
-    while (getDistance(UZS_TRIGGER_PIN, UZS_ECHO_PIN, pastUZDSValue) > distanceToCheckObject)
-    {
-      preg(baseSpeed);
-    }
-    go(baseSpeed, baseSpeed, baseDelay * 3);
-    go(0, 0, baseDelay);
-    while (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN, pastUZDFValue) > distanceToCheckObject)
-    {
-      go(baseSpeed, -baseSpeed);
-    }
-    go(0, 0, baseDelay);
-    moveToTakeObjectOnBlack();
-    left();
-  }
-  if (crossCount == 15)
-  {
-    moveToPutObjectOnBlack();
-    left();
-    left();
-  }
-  if (crossCount == 16)
-  {
-    right();
-  }
-  if (crossCount == 21)
-  {
-    finish();
-  }
-}
+// void drive1()
+// {
+//   if (crossCount == 4)
+//   {
+//     right();
+//   }
+//   if (crossCount == 5)
+//   {
+//     right();
+//   }
+//   if (crossCount == 6)
+//   {
+//     right();
+//   }
+//   if (crossCount == 7)
+//   {
+//     moveToTakeObjectOnBlack();
+//     left();
+//     left();
+//   }
+//   if (crossCount == 10)
+//   {
+//     moveToPutObjectOnBlack();
+//     left();
+//     left();
+//   }
+//   if (crossCount == 11)
+//   {
+//     right();
+//   }
+//   if (crossCount == 12)
+//   {
+//     left();
+//   }
+//   if (crossCount == 13)
+//   {
+//     right();
+//   }
+//   if (crossCount == 14)
+//   {
+//     while (getDistance(UZS_TRIGGER_PIN, UZS_ECHO_PIN) > distanceToCheckObject)
+//     {
+//       preg(baseSpeed);
+//     }
+//     go(baseSpeed, baseSpeed, baseDelay * 3);
+//     go(0, 0, baseDelay);
+//     while (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN) > distanceToCheckObject)
+//     {
+//       go(baseSpeed, -baseSpeed);
+//     }
+//     go(0, 0, baseDelay);
+//     moveToTakeObjectOnBlack();
+//     left();
+//   }
+//   if (crossCount == 15)
+//   {
+//     moveToPutObjectOnBlack();
+//     left();
+//     left();
+//   }
+//   if (crossCount == 16)
+//   {
+//     right();
+//   }
+//   if (crossCount == 21)
+//   {
+//     finish();
+//   }
+// }
 
-void drive2()
-{
-  if (crossCount == 4)
-  {
-    right();
-  }
-  if (crossCount == 5)
-  {
-    right();
-  }
-  if (crossCount == 6)
-  {
-    right();
-  }
-  if (crossCount == 7)
-  {
-    moveToTakeObjectOnBlack();
-    left();
-    left();
-  }
-  if (crossCount == 9)
-  {
-    left();
-  }
-  if (crossCount == 10)
-  {
-    right();
-  }
-  if (crossCount == 11)
-  {
-    moveToPutObjectOnBlack();
-    left();
-    left();
-  }
-  if (crossCount == 13)
-  {
-    right();
-  }
+// void drive2()
+// {
+//   if (crossCount == 4)
+//   {
+//     right();
+//   }
+//   if (crossCount == 5)
+//   {
+//     right();
+//   }
+//   if (crossCount == 6)
+//   {
+//     right();
+//   }
+//   if (crossCount == 7)
+//   {
+//     moveToTakeObjectOnBlack();
+//     left();
+//     left();
+//   }
+//   if (crossCount == 9)
+//   {
+//     left();
+//   }
+//   if (crossCount == 10)
+//   {
+//     right();
+//   }
+//   if (crossCount == 11)
+//   {
+//     moveToPutObjectOnBlack();
+//     left();
+//     left();
+//   }
+//   if (crossCount == 13)
+//   {
+//     right();
+//   }
 
-  if (crossCount == 14)
-  {
-    while (getDistance(UZS_TRIGGER_PIN, UZS_ECHO_PIN, pastUZDSValue) > distanceToCheckObject)
-    {
-      preg(baseSpeed);
-    }
-    go(baseSpeed, baseSpeed, baseDelay * 3);
-    go(0, 0, baseDelay);
-    while (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN, pastUZDFValue) > distanceToCheckObject)
-    {
-      go(baseSpeed, -baseSpeed);
-    }
-    go(0, 0, baseDelay);
-    moveToTakeObjectOnBlack();
-    left();
-  }
-  if (crossCount == 15)
-  {
-    moveToPutObjectOnBlack();
-    left();
-    left();
-  }
-  if (crossCount == 16)
-  {
-    right();
-  }
-  if (crossCount == 21)
-  {
-    finish();
-  }
-}
+//   if (crossCount == 14)
+//   {
+//     while (getDistance(UZS_TRIGGER_PIN, UZS_ECHO_PIN) > distanceToCheckObject)
+//     {
+//       preg(baseSpeed);
+//     }
+//     go(baseSpeed, baseSpeed, baseDelay * 3);
+//     go(0, 0, baseDelay);
+//     while (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN) > distanceToCheckObject)
+//     {
+//       go(baseSpeed, -baseSpeed);
+//     }
+//     go(0, 0, baseDelay);
+//     moveToTakeObjectOnBlack();
+//     left();
+//   }
+//   if (crossCount == 15)
+//   {
+//     moveToPutObjectOnBlack();
+//     left();
+//     left();
+//   }
+//   if (crossCount == 16)
+//   {
+//     right();
+//   }
+//   if (crossCount == 21)
+//   {
+//     finish();
+//   }
+// }
 
-void drive3()
-{
-  if (crossCount == 4)
-  {
-    right();
-  }
-  if (crossCount == 5)
-  {
-    right();
-  }
-  if (crossCount == 6)
-  {
-    right();
-  }
-  if (crossCount == 7)
-  {
-    moveToTakeObjectOnBlack();
-    left();
-    left();
-  }
-  if (crossCount == 9)
-  {
-    left();
-  }
+// void drive3()
+// {
+//   if (crossCount == 4)
+//   {
+//     right();
+//   }
+//   if (crossCount == 5)
+//   {
+//     right();
+//   }
+//   if (crossCount == 6)
+//   {
+//     right();
+//   }
+//   if (crossCount == 7)
+//   {
+//     moveToTakeObjectOnBlack();
+//     left();
+//     left();
+//   }
+//   if (crossCount == 9)
+//   {
+//     left();
+//   }
 
-  if (crossCount == 11)
-  {
-    moveToPutObjectOnBlack();
-    left();
-    left();
-  }
-  if (crossCount == 12)
-  {
-    right();
-  }
-  if (crossCount == 13)
-  {
-    right();
-  }
+//   if (crossCount == 11)
+//   {
+//     moveToPutObjectOnBlack();
+//     left();
+//     left();
+//   }
+//   if (crossCount == 12)
+//   {
+//     right();
+//   }
+//   if (crossCount == 13)
+//   {
+//     right();
+//   }
 
-  if (crossCount == 14)
-  {
-    while (getDistance(UZS_TRIGGER_PIN, UZS_ECHO_PIN, pastUZDSValue) > distanceToCheckObject)
-    {
-      preg(baseSpeed);
-    }
-    go(baseSpeed, baseSpeed, baseDelay * 3);
-    go(0, 0, baseDelay);
-    while (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN, pastUZDFValue) > distanceToCheckObject)
-    {
-      go(baseSpeed, -baseSpeed);
-    }
-    go(0, 0, baseDelay);
-    moveToTakeObjectOnBlack();
-    left();
-  }
-  if (crossCount == 15)
-  {
-    moveToPutObjectOnBlack();
-    left();
-    left();
-  }
-  if (crossCount == 16)
-  {
-    right();
-  }
-  if (crossCount == 21)
-  {
-    finish();
-  }
-}
+//   if (crossCount == 14)
+//   {
+//     while (getDistance(UZS_TRIGGER_PIN, UZS_ECHO_PIN) > distanceToCheckObject)
+//     {
+//       preg(baseSpeed);
+//     }
+//     go(baseSpeed, baseSpeed, baseDelay * 3);
+//     go(0, 0, baseDelay);
+//     while (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN) > distanceToCheckObject)
+//     {
+//       go(baseSpeed, -baseSpeed);
+//     }
+//     go(0, 0, baseDelay);
+//     moveToTakeObjectOnBlack();
+//     left();
+//   }
+//   if (crossCount == 15)
+//   {
+//     moveToPutObjectOnBlack();
+//     left();
+//     left();
+//   }
+//   if (crossCount == 16)
+//   {
+//     right();
+//   }
+//   if (crossCount == 21)
+//   {
+//     finish();
+//   }
+// }
