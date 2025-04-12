@@ -8,24 +8,26 @@
 void moveToTakeObjectOnBlack()
 {
   driveToObjectOnBlack();
-  go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
   closeServo();        // закрываем сервопривод
+  // startTime = millis();                     // Считываем текущее время
+  // while (millis() - startTime < baseDelay/2) // Пока текущее время - время старта таймера меньше заданного интервала едем по preg()
+  // {
+  //   go(-baseSpeed, -baseSpeed);
+  // }
   driveBackToCross();
   doezd();
-
-  // while (!isOnCross()) // Едем вперед пока не доедем до перекрестка
-  // {
-  //   preg(baseSpeed);
-  // }
-  // go(0, 0, baseDelay); // Ждем пока закончится импульс инерции
 }
 
 void moveToPutObjectOnBlack()
 {
   // M_sensor();
-  pregSomeTime(timeToMoveBanka);
+  driveSomeTime(timeToMoveBanka);
 
-  go(0, 0, baseDelay);
+  startTime = millis();                     // Считываем текущее время
+  while (millis() - startTime < baseDelay) // Пока текущее время - время старта таймера меньше заданного интервала едем по preg()
+  {
+    stop();
+  }
   openServo();
   driveBackToCross();
   doezd();
@@ -33,7 +35,11 @@ void moveToPutObjectOnBlack()
 
 void moveObjectNextCross()
 {
-  go(baseSpeed, -baseSpeed, povorotDelay);
+  startTime = millis();                     // Считываем текущее время
+  while ((millis() - startTime) < povorotDelay) // Пока текущее время - время старта таймера меньше заданного интервала едем по preg()
+  {
+    go(baseSpeed, -baseSpeed);
+  }
   while (distanceToTakeBanka > 10)
   {
     go(baseSpeed, baseSpeed);
@@ -45,68 +51,28 @@ void moveObjectNextCross()
 
 void MoveObject90grad()
 {
-
   moveToTakeObjectOnBlack();
   right();
   moveToPutObjectOnBlack();
   right();
- 
 }
 
-void M_sensor()
-{
-  while (isOnBlack(IR_SENSOR_M_PIN))
-  {
-    preg(baseSpeed);
-  }
-}
 
-void obezdObject()
-{
-  if (getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN) < distanceToCheckObject)
-  {
-    go(0, 0, baseDelay);
-    go(baseSpeed, -baseSpeed, povorotDelay); // поворачиваем влево пока мы на линии с банкой
-    go(0, 0, baseDelay);
-    go(baseSpeed, baseSpeed, obezdDelay);      // едем вперед секунду чтобы уйти с линии где банка
-    go(-baseSpeed, baseSpeed, povorotDelay*2);       // поворачиваем влево
-    while (IR_SENSOR_R_PIN > blackLimit)           // едем пока не вернемся на линию
-    {
-      go(baseSpeed, baseSpeed);
-    }
-  }
-}
-// перемещение банки на другую сторону перекрестка
-void moveObjectFromCross()
-{
-  // crossCount++;
-  // finish();
-  // doezd();
-  left();
 
-  if (getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN) < distanceToCheckBanka)
+void obezdObject(int distanceToStartObezd, int moveSide, int moveForward)
+{
+  while (getFDistance() > distanceToStartObezd)
   {
-    //  moveBankaTake();
-    // moveBankaPut();
-    right();
-    right();
-    while (getDistance(UZF_TRIGGER_PIN,UZF_ECHO_PIN) > distanceToTakeBanka)
-    {
-      preg(baseSpeed);
-    }
-    go(baseSpeed, baseSpeed, baseDelay);
-    go(0, 0, baseDelay);
-    go(-baseSpeed, -baseSpeed, baseDelay);
-    left();
-    while (!isOnCross())
-    {
-      preg(baseSpeed);
-    }
-    doezd();
-    right();
+    pid(baseSpeed); // едем вперед пока не увидим банку
   }
-  else
+  turnEnc(baseSpeed, -55);                // поворачиваем влево пока мы на линии с банкой
+  driveSomeDistance(moveSide); // едем вперед, чтобы уйти с линии где банка
+  turnEnc(baseSpeed, 55);
+  driveSomeDistance(moveForward);       // едем вперед секунду чтобы уйти с линии где банка
+  turnEnc(baseSpeed, 40);                          // поворачиваем влево
+  while (IR_SENSOR_R_PIN > blackLimit) // едем пока не вернемся на линию
   {
-    right();
+    pid(baseSpeed);
   }
+  stop();
 }

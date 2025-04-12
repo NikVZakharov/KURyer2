@@ -10,15 +10,6 @@ void initServo(){
   servo.write(servoOpenPosition);
 }
 
-void closeServo()
-{
-  for (int i = servoOpenPosition; i < servoClosePosition; i++)
-  {
-    servo.write(i);
-    delay(20);
-  }
-  delay(baseDelay);
-}
 
 void openServo()
 {
@@ -29,4 +20,14 @@ void openServo()
   }
   delay(baseDelay);
   //servo.write(servoOpenPosition);
+}
+
+void closeServo()
+{
+  for (int i = servoOpenPosition; i < servoClosePosition; i++)
+  {
+    servo.write(i);
+    delay(20);
+  }
+  delay(baseDelay);
 }

@@ -9,47 +9,49 @@
 #include <header.h>
 #include <LCD.h>
 
+Encoder encL;
+Encoder encR;
 
-
-
-Encoder enc1;
-Encoder enc2;
-
-void initENC(){
-  enc1.setup(MOTOR_L_ENCODER_PIN1, MOTOR_L_ENCODER_PIN2);
-  enc2.setup(MOTOR_R_ENCODER_PIN1, MOTOR_R_ENCODER_PIN2);
-  enc1.reverse();
-  enc2.reverse();
+void initENC()
+{
+  encL.setup(MOTOR_L_ENCODER_PIN1, MOTOR_L_ENCODER_PIN2);
+  encR.setup(MOTOR_R_ENCODER_PIN1, MOTOR_R_ENCODER_PIN2);
+  encL.reverse();
+  encR.reverse();
 }
 
-long getEncoder1(){
-long  value=enc1.get();
-//LCDprint(0, 0, value);
+long getEncoderL()
+{
+  long value = encL.get();
+  // lcdShow(0, 0, value);
+  //Serial.print(value);
+  //Serial.print(" ");
   return value;
-  
 }
 
-long getEncoder2(){
-long  value=enc2.get();
-//LCDprint(1, 0, value);
+long getEncoderR()
+{
+  long value = -encR.get();
+  // lcdShow(1, 0, value);
+  //Serial.println(value);
   return value;
-  
 }
 
-void clearEncoder1(){
+void clearEncoderL()
+{
 
-   enc1.clear();
-  
+  encL.clear();
 }
 
-void clearEncoder2(){
+void clearEncoderR()
+{
 
-   enc2.clear();
-  
+  encR.clear();
 }
 
-void clearAllEncoders(){
+void clearAllEncoders()
+{
 
-  clearEncoder1();
-  clearEncoder2();
+  clearEncoderL();
+  clearEncoderR();
 }

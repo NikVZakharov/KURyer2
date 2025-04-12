@@ -264,7 +264,7 @@ void encpid(int K, int V, int N)
   go(constrain(V + uprvozd, -250, 255), constrain(V - uprvozd, -250, 255));
   if (enc1.get() >= N || enc2.get() >= N)
   {
-    go(0, 0);
+    stop();
     delay(2000);
     enc1.clear();
     enc2.clear();
@@ -278,7 +278,7 @@ void encleft(int K, int V, int N)
   go(constrain(V - uprvozd, -250, 255), -constrain(V + uprvozd, -250, 255));
   if (abs(enc1.get()) >= N || abs(enc2.get()) >= N)
   {
-    go(0, 0);
+    stop();
     delay(2000);
     enc1.clear();
     enc2.clear();

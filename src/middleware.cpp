@@ -75,6 +75,7 @@ int getIRSensorValue(int sensor)
   // return IS_IR_SENSORS_REVERS? 1024-result:result;
   return result;
 }
+
 bool isOnBlack(int sensor)
 {
   bool result = false;
@@ -90,33 +91,77 @@ int getIRError()
 
   int x = getIRSensorValue(IR_SENSOR_L_PIN);
   int y = getIRSensorValue(IR_SENSOR_R_PIN);
-  // LCDprint(0, 0, x);
-  // LCDprint(1, 0, y);
+  // lcdShow(0, 0, x);
+  // lcdShow(1, 0, y);
   //Serial.print(" ");
   //Serial.print(isOnBlack(IR_SENSOR_M_PIN));
 
   //return isOnBlack(IR_SENSOR_M_PIN) ? x - y : y-x ;
-  return y - x;
+  return whiteLineModeEnabled ?  x-y : y - x;
 }
 
 int getEncoderError()
 {
-  int x = abs(getEncoder1());
-  int y = abs(getEncoder2());
-  // LCDprint(0, 0, x);
-  // LCDprint(1, 0, y);
+  int x = abs(getEncoderL());
+  int y = abs(getEncoderR());
+  // lcdShow(0, 0, x);
+  // lcdShow(1, 0, y);
   // Serial.print(x);
   // Serial.print("  ");
   // Serial.println(y);
-
-  return y - x;
+  float z = x - y;
+  // if (driveDirect)
+  // {
+  //   return -z;
+  // }
+  // else
+  // {
+    // Serial.print(x);
+    // Serial.print("  ");
+    // Serial.print(y);
+    return z;
+ // }
+  
+  
 }
 
 int getWallError()
 {
-  return getDistance(UZS_TRIGGER_PIN, UZS_ECHO_PIN) - walldistance;
+  return walldistance - getDistance(UZR_TRIGGER_PIN);
 }
 
+extern const int WHITE_LINE_THRESHOLD;
+extern bool whiteLineModeEnabled;
+
+// Detection for white line on black background
+bool isOnWhite(int sensor)
+{
+  int sensorValue = analogRead(sensor);
+  return (sensorValue > WHITE_LINE_THRESHOLD);
+}
+
+// Check for white line crossing
+bool isOnCrossWhite()
+{
+  bool result = false;
+  if (isOnWhite(IR_SENSOR_L_PIN) && isOnWhite(IR_SENSOR_R_PIN))
+  {
+    result = true;
+  }
+  return result;
+}
+
+// Get IR error based on background type (white line mode)
+int getIRErrorReversed()
+{
+  int x = getIRSensorValue(IR_SENSOR_L_PIN);
+  int y = getIRSensorValue(IR_SENSOR_R_PIN);
+  
+  // For white line on black background, reverse the error calculation
+  return x - y;
+}
+
+// Get error based on background type
 int getError()
 {
   int result;
@@ -126,40 +171,43 @@ int getError()
   }
   else
   {
-    if (driveForward==true)
+    if (driveDirect==true)
     {
       result = getEncoderError();
     }
     else
     {
-      result = getIRError();
+      if (whiteLineModeEnabled) {
+        result = getIRErrorReversed();
+      } else {
+        result = getIRError();
+      }
     }
   }
   return result;
 }
 
-// находятся ли датчики на черной линии
+// Check for intersection based on line color mode
 bool isOnCross()
 {
-  bool result = false;
-  if (isOnBlack(IR_SENSOR_L_PIN) && isOnBlack(IR_SENSOR_R_PIN)/* && isOnBlack(IR_SENSOR_M_PIN)*/ /*|| !isOnBlack(IR_SENSOR_L_PIN) && !isOnBlack(IR_SENSOR_R_PIN)/* && !isOnBlack(IR_SENSOR_M_PIN)*/)
-  {
-    result = true;
-    
+  if (whiteLineModeEnabled) {
+    return isOnCrossWhite();
+  } else {
+    // Original black line crossing detection
+    return (isOnBlack(IR_SENSOR_L_PIN) && isOnBlack(IR_SENSOR_R_PIN) && isOnBlack(IR_SENSOR_S_PIN));
   }
-  return result;
 }
 
-bool checkBanka()
-{
-  bool result = false;
-  if (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN) < distanceToCheckBanka)
-  {
-    result = true;
-  }
-  haveBanka = result;
-  return result;
-}
+// bool checkBanka()
+// {
+//   bool result = false;
+//   if (getDistance(UZF_TRIGGER_PIN, UZF_ECHO_PIN) < distanceToCheckBanka)
+//   {
+//     result = true;
+//   }
+//   haveBanka = result;
+//   return result;
+// }
 
 void crossCalc()
 {
@@ -167,4 +215,45 @@ void crossCalc()
   {
     crossCount++;
   }
+}
+
+// Function to check if robot has reached a new field
+bool detectNewField() {
+  // Read all three IR sensors
+  int leftValue = analogRead(IR_SENSOR_L_PIN);
+  int rightValue = analogRead(IR_SENSOR_R_PIN);
+  int centerValue = analogRead(IR_SENSOR_S_PIN);
+  
+  // For a perpendicular line, all three sensors should detect black line
+  bool allSensorsDetectLine = (leftValue < blackLimit) && 
+                             (rightValue < blackLimit) && 
+                             (centerValue < blackLimit);
+  
+  // To avoid false positives, we'll use a simple debounce
+  static unsigned long lastDetectionTime = 0;
+  static bool lastDetection = false;
+  static int detectionCount = 0;
+  
+  if (allSensorsDetectLine) {
+    // If this is a new detection (wasn't detected in previous call)
+    if (!lastDetection) {
+      lastDetection = true;
+      lastDetectionTime = millis();
+      detectionCount++;
+      
+      // For extra confidence, require multiple consecutive detections
+      if (detectionCount >= 3) {
+        detectionCount = 0;
+        return true;
+      }
+    }
+  } else {
+    // Reset if no line detected for a while
+    if (millis() - lastDetectionTime > 500) {
+      lastDetection = false;
+      detectionCount = 0;
+    }
+  }
+  
+  return false;
 }

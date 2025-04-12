@@ -16,15 +16,14 @@ void lcdclear()
   lcd.clear();
 }
 
-void LCDprint(int x, int y, float number)
+void lcdShow(int x, int y, const char *text)
 {
-  //lcd.clear();
-  startTime = millis();                        // Считываем текущее время
-  while (millis() - startTime < timeToShowLED) // Пока текущее время - время старта таймера меньше интервала выравнивания едем
-  {
-    lcd.setCursor(y, x);
-    lcd.print(number);
-  }
-  // delay(50);
+  lcd.setCursor(y, x);
+  lcd.print(text);
+}
 
+void lcdShow(int x, int y, float number)
+{
+  lcd.setCursor(y, x);
+  lcd.print(number);
 }

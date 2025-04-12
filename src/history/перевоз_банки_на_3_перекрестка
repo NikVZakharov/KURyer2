@@ -13,7 +13,7 @@
 //    doezd();
 //    crossCount++;
 
-//    LCDprint(0, 0, crossCount);
+//    lcdShow(0, 0, crossCount);
   
 
 //     if (crossCount == 1)

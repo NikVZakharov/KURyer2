@@ -11,7 +11,7 @@ void logInit()
     Serial.begin(9600); // Only using Serial when not debugging!
 }
 
-void consoleLog(int interval=500)
+void consoleLog(float interval=500)
 {
 
     //     //значения переднего УЗ датчика
@@ -20,7 +20,7 @@ void consoleLog(int interval=500)
     // //     // значения левого и правого ИК датчика
     // Serial.println(analogRead(IR_SENSOR_L_PIN));
     // Serial.print(" ");
-    // Serial.print(analogRead(IR_SENSOR_R_PIN));
+    // Serial.println(analogRead(IR_SENSOR_R_PIN));
     // Serial.print(" ");
 
     // //    // значения левого и правого ИК датчика нормализованные
@@ -45,6 +45,7 @@ void consoleLog(int interval=500)
     // Serial.print(getEncoder1());
     // Serial.print("  ");
     // Serial.println(getEncoder2());
+    
 
         
     //Serial.println(isOnCross());
